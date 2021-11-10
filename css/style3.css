@@ -15,7 +15,7 @@ body, html {height: 100%;}
 .wrapper {box-sizing: border-box; height: 100%; overflow: auto; }
 
 
-a {text-decoration: none; color: #333; border-bottom: 3px solid #e35036;}
+a {text-decoration: none; color: #ffffff; border-bottom: 3px solid #ffffff;}
 a:hover {color: #ee9d79}
 p {font-weight: 200; font-size: 20px;}
 
