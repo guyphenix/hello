@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guy Phenix :: Homepage</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tahoma&display=swap');
+
+:root {
+  --win-bg: #d4d0c8;
+  --win-border-light: #ffffff;
+  --win-border-dark: #808080;
+  --win-border-darker: #404040;
+  --title-start: #0a246a;
+  --title-end: #a6b5e7;
+  --title-inactive: #7a96df;
+  --body-bg: #c0c0c0;
+  --panel-bg: #d4d0c8;
+  --inset-light: #ffffff;
+  --inset-dark: #808080;
+  --text: #000000;
+  --text-dim: #444444;
+  --blue-btn: #0a246a;
+  --flash-orange: #ff6600;
+  --flash-yellow: #ffcc00;
+  --flash-dark: #1a1a1a;
+  --ps-blue: #2d5be3;
+  --tab-active: #d4d0c8;
+  --tab-inactive: #bab8b0;
+  --checkerboard: #888888;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  background: var(--flash-dark);
+  height: 100vh;
+  overflow: hidden;
+  cursor: default;
+  position: relative;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── OUTER APP FRAME ── */
+#app-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-darker) var(--win-border-darker) var(--win-border-light);
+  background: var(--body-bg);
+}
+
+/* ── TITLE BAR ── */
+#titlebar {
+  height: 22px;
+  background: linear-gradient(to right, var(--title-start), var(--title-end));
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 4px;
+  flex-shrink: 0;
+  user-select: none;
+}
+#titlebar .tb-icon {
+  width: 16px; height: 16px;
+  background: linear-gradient(135deg, #ff6600, #ffcc00);
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
+  color: white;
+  flex-shrink: 0;
+  text-shadow: 1px 1px 0 #000;
+  border: 1px solid rgba(0,0,0,0.4);
+}
+#titlebar .tb-title {
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  flex: 1;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+.tb-btn {
+  width: 16px; height: 14px;
+  background: var(--win-bg);
+  border: 1px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #000;
+  font-weight: bold;
+}
+.tb-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+
+/* ── MENU BAR ── */
+#menubar {
+  height: 20px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--win-border-dark);
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+.menu-item {
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.menu-item:hover {
+  background: var(--blue-btn);
+  color: white;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+
+/* ── TOOLBARS ── */
+#toolbars {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.toolbar {
+  height: 26px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--win-border-dark);
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 2px;
+}
+.toolbar-sep {
+  width: 1px; height: 18px;
+  background: var(--win-border-dark);
+  margin: 0 3px;
+  border-right: 1px solid var(--win-border-light);
+}
+.t-btn {
+  width: 22px; height: 20px;
+  background: var(--panel-bg);
+  border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+  position: relative;
+}
+.t-btn:hover {
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+}
+.t-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+.t-btn.active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  background: #b8b4ac;
+}
+.t-label {
+  font-size: 11px;
+  color: #333;
+  padding: 0 6px;
+}
+.t-input {
+  height: 18px;
+  width: 50px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  font-size: 11px;
+  font-family: 'Tahoma', sans-serif;
+  padding: 0 3px;
+  color: #000;
+}
+/* Flash orange toolbar accent */
+.flash-toolbar {
+  background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+  border-bottom: 1px solid #000;
+}
+.flash-toolbar .t-btn {
+  background: transparent;
+  color: #ccc;
+  border-color: transparent;
+}
+.flash-toolbar .t-btn:hover {
+  border-color: #555 #222 #222 #555;
+  color: #ff6600;
+}
+.flash-toolbar .t-label { color: #aaa; }
+.flash-timeline-btn {
+  background: #ff6600;
+  color: white;
+  border-color: #ff9944 #cc4400 #cc4400 #ff9944;
+  font-size: 9px;
+  width: auto;
+  padding: 0 6px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* ── MAIN AREA ── */
+#workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── LEFT TOOLS (Photoshop style) ── */
+#ps-tools {
+  width: 28px;
+  background: var(--panel-bg);
+  border-right: 1px solid;
+  border-color: var(--win-border-dark);
+  padding: 4px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.ps-tool {
+  width: 22px; height: 22px;
+  background: var(--panel-bg);
+  border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+}
+.ps-tool:hover, .ps-tool.active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+.ps-tool.active { background: #b8b4ac; }
+.ps-tool-sep {
+  height: 1px;
+  background: var(--win-border-dark);
+  border-bottom: 1px solid var(--win-border-light);
+  margin: 3px 0;
+}
+/* Fore/bg colour squares */
+.ps-colors {
+  margin-top: auto;
+  position: relative;
+  width: 22px; height: 22px;
+}
+.ps-bg-color {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 13px; height: 13px;
+  background: white;
+  border: 1px solid #000;
+}
+.ps-fg-color {
+  position: absolute;
+  top: 0; left: 0;
+  width: 13px; height: 13px;
+  background: #000;
+  border: 1px solid #000;
+}
+
+/* ── CANVAS AREA ── */
+#canvas-area {
+  flex: 1;
+  background:
+    repeating-conic-gradient(#888 0% 25%, #aaa 0% 50%) 0 0 / 16px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── FLASH TIMELINE (bottom strip) ── */
+#flash-timeline {
+  height: 80px;
+  background: linear-gradient(to bottom, #2a2a2a, #1e1e1e);
+  border-top: 2px solid #000;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+#tl-header {
+  height: 20px;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 8px;
+  border-bottom: 1px solid #000;
+}
+.tl-tab {
+  padding: 2px 10px;
+  font-size: 10px;
+  color: #999;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+}
+.tl-tab.active {
+  background: #2a2a2a;
+  color: #ff6600;
+  border-color: #444;
+}
+.tl-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.tl-ctrl {
+  color: #aaa;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 1px 4px;
+  border: 1px solid #444;
+  border-radius: 2px;
+  background: #333;
+}
+.tl-ctrl:hover { color: #ff6600; border-color: #ff6600; }
+#tl-body {
+  flex: 1;
+  display: flex;
+}
+#tl-layers {
+  width: 120px;
+  border-right: 1px solid #111;
+  display: flex;
+  flex-direction: column;
+}
+.tl-layer {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 4px;
+  border-bottom: 1px solid #111;
+  font-size: 10px;
+  color: #aaa;
+  cursor: pointer;
+}
+.tl-layer:hover { background: #333; }
+.tl-layer.active { background: #0a3060; color: #fff; }
+.tl-layer-icon { font-size: 9px; opacity: 0.6; }
+#tl-frames {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.tl-frame-numbers {
+  height: 14px;
+  background: #222;
+  border-bottom: 1px solid #111;
+  display: flex;
+  align-items: center;
+  padding-left: 2px;
+}
+.tl-frame-num {
+  font-size: 8px;
+  color: #666;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.tl-track-row {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #111;
+  position: relative;
+}
+.tl-cell {
+  width: 20px; height: 100%;
+  border-right: 1px solid #1a1a1a;
+  flex-shrink: 0;
+  position: relative;
+}
+.tl-cell.filled { background: rgba(0,150,255,0.15); }
+.tl-cell.keyframe::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 6px; height: 6px;
+  background: #ff6600;
+  border-radius: 50%;
+  border: 1px solid #000;
+}
+.tl-cell.keyframe.empty::after { background: transparent; border: 2px solid #ff6600; }
+#playhead-bar {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: red;
+  left: 40px;
+  pointer-events: none;
+  z-index: 5;
+}
+#playhead-bar::before {
+  content: '▼';
+  position: absolute;
+  top: -1px;
+  left: -3px;
+  color: red;
+  font-size: 7px;
+}
+
+/* ── BOTTOM STATUS ── */
+#statusbar {
+  height: 20px;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--win-border-light);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.sb-panel {
+  height: 14px;
+  padding: 0 6px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  font-size: 10px;
+  display: flex; align-items: center;
+  color: #333;
+  min-width: 80px;
+}
+
+/* ── DRAGGABLE PHOTO WINDOW ── */
+#photo-window {
+  position: absolute;
+  width: 320px;
+  background: var(--panel-bg);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-darker) var(--win-border-darker) var(--win-border-light);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
+  z-index: 100;
+  top: 60px;
+  left: 80px;
+  user-select: none;
+}
+#photo-window.inactive .pw-titlebar {
+  background: linear-gradient(to right, #7a96df, #b8c4e4);
+}
+#photo-window .pw-titlebar {
+  height: 20px;
+  background: linear-gradient(to right, var(--title-start), var(--title-end));
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 4px;
+  cursor: move;
+}
+.pw-title { color: white; font-size: 11px; font-weight: bold; flex: 1; text-shadow: 1px 1px 1px rgba(0,0,0,0.5); }
+.pw-btn {
+  width: 14px; height: 12px;
+  background: var(--win-bg);
+  border: 1px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  font-size: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+/* Tab bar */
+.pw-tabs {
+  display: flex;
+  background: #b8b4ac;
+  border-bottom: 1px solid var(--win-border-dark);
+  padding: 2px 4px 0;
+  gap: 2px;
+}
+.pw-tab {
+  padding: 2px 10px;
+  font-size: 10px;
+  background: #b8b4ac;
+  border: 1px solid var(--win-border-dark);
+  border-bottom: none;
+  cursor: pointer;
+  color: #333;
+  border-radius: 2px 2px 0 0;
+}
+.pw-tab.active {
+  background: var(--panel-bg);
+  color: #000;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--panel-bg) var(--win-border-dark);
+  position: relative;
+  z-index: 1;
+  margin-bottom: -1px;
+}
+/* Content area */
+.pw-content {
+  display: none;
+  padding: 8px;
+  background: var(--panel-bg);
+}
+.pw-content.active { display: block; }
+
+/* Photo inset */
+.photo-inset {
+  border: 2px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  background: #888;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  position: relative;
+}
+.photo-inset img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  filter: saturate(0.9) contrast(1.05);
+}
+/* Photoshop-style pixel info strip under photo */
+.photo-info-strip {
+  display: flex;
+  background: #b8b4ac;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  border-top: none;
+  padding: 2px 6px;
+  gap: 8px;
+}
+.pi-item { font-size: 10px; color: #333; }
+.pi-item span { color: #000; font-weight: bold; }
+/* Zoom controls under strip */
+.photo-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+  gap: 4px;
+}
+.zoom-btn {
+  width: 18px; height: 16px;
+  background: var(--panel-bg);
+  border: 1px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  font-size: 11px; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #333;
+}
+.zoom-btn:active {
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+}
+.zoom-slider {
+  flex: 1; height: 4px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px; height: 14px;
+  background: var(--panel-bg);
+  border: 1px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  cursor: pointer;
+}
+.zoom-label { font-size: 10px; color: #333; width: 30px; text-align: center; }
+
+/* About tab */
+.about-content { font-size: 11px; line-height: 1.7; color: #333; }
+.about-content h2 {
+  font-size: 13px; font-weight: bold; color: #000;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--win-border-dark);
+  padding-bottom: 3px;
+  display: flex; align-items: center; gap: 6px;
+}
+.about-content h2::before {
+  content: '▶';
+  color: var(--flash-orange);
+  font-size: 9px;
+}
+.about-content p { margin-bottom: 8px; }
+
+/* LinkedIn tab */
+.li-content { display: flex; flex-direction: column; gap: 8px; }
+.li-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+  transition: none;
+}
+.li-link-btn:hover {
+  background: #0a246a;
+  color: white;
+  border-color: #3060c0 #05103a #05103a #3060c0;
+}
+.li-icon {
+  width: 24px; height: 24px;
+  background: #0077b5;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  flex-shrink: 0;
+  font-family: 'Georgia', serif;
+  border: 1px solid #005885;
+}
+.li-text { font-size: 11px; font-weight: bold; }
+.li-sub { font-size: 10px; color: #666; }
+.li-link-btn:hover .li-sub { color: #aac; }
+.li-note {
+  font-size: 10px;
+  color: #666;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  background: #fffff0;
+  padding: 4px 6px;
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}
+.li-note::before { content: 'ℹ'; color: #0a246a; flex-shrink: 0; }
+
+/* ── SECOND WINDOW: Flash properties ── */
+#flash-panel {
+  position: absolute;
+  width: 200px;
+  background: #2a2a2a;
+  border: 1px solid #000;
+  border-top: 2px solid #111;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+  z-index: 99;
+  top: 80px;
+  right: 40px;
+  user-select: none;
+  color: #ccc;
+}
+#flash-panel .fp-titlebar {
+  height: 18px;
+  background: linear-gradient(to right, #333, #222);
+  border-bottom: 1px solid #000;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  cursor: move;
+  gap: 4px;
+}
+.fp-dot { width: 8px; height: 8px; border-radius: 50%; }
+.fp-dot.red { background: #ff5f56; }
+.fp-dot.yellow { background: #ffbd2e; }
+.fp-dot.green { background: #27c93f; }
+.fp-title { color: #aaa; font-size: 10px; flex: 1; text-align: center; letter-spacing: 1px; }
+.fp-section {
+  border-bottom: 1px solid #111;
+}
+.fp-section-title {
+  padding: 3px 8px;
+  font-size: 10px;
+  color: #ff6600;
+  background: #222;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.fp-section-title::before { content: '▾'; font-size: 9px; }
+.fp-row {
+  display: flex;
+  align-items: center;
+  padding: 3px 8px 3px 16px;
+  gap: 6px;
+  border-bottom: 1px solid #1e1e1e;
+}
+.fp-label { font-size: 10px; color: #888; flex: 1; }
+.fp-val {
+  font-size: 10px;
+  color: #ffcc00;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 1px 4px;
+  min-width: 50px;
+  text-align: right;
+}
+.fp-val.text-val { color: #7ec8ff; }
+
+/* Startup splash screen */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: var(--flash-dark);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0;
+  animation: splash-out 0.3s ease-in 2.5s forwards;
+}
+@keyframes splash-out {
+  to { opacity: 0; pointer-events: none; }
+}
+.splash-box {
+  width: 400px;
+  background: var(--panel-bg);
+  border: 2px solid;
+  border-color: var(--win-border-light) var(--win-border-darker) var(--win-border-darker) var(--win-border-light);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.5);
+}
+.splash-title {
+  height: 22px;
+  background: linear-gradient(to right, var(--title-start), var(--title-end));
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 6px;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+}
+.splash-body {
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.splash-logo {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, #ff6600, #ffcc00, #ff6600);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.splash-text h1 { font-size: 16px; font-weight: bold; color: #000; margin-bottom: 2px; }
+.splash-text p { font-size: 11px; color: #555; line-height: 1.5; }
+.splash-progress {
+  margin: 0 16px 16px;
+}
+.splash-progress-label {
+  font-size: 10px;
+  color: #555;
+  margin-bottom: 3px;
+  display: flex;
+  justify-content: space-between;
+}
+.splash-bar-outer {
+  height: 12px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+  overflow: hidden;
+}
+.splash-bar-inner {
+  height: 100%;
+  background: linear-gradient(to right, #0a246a, #4080ff);
+  width: 0%;
+  animation: progress-fill 2.2s ease-out forwards;
+}
+@keyframes progress-fill { to { width: 100%; } }
+
+/* Ripple cursor effect for old-flash feel */
+.click-ripple {
+  position: fixed;
+  width: 20px; height: 20px;
+  border: 2px solid #ff6600;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  animation: ripple-out 0.5s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+@keyframes ripple-out {
+  from { width: 4px; height: 4px; opacity: 1; }
+  to { width: 30px; height: 30px; opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-box">
+    <div class="splash-title">
+      <div style="width:14px;height:14px;background:linear-gradient(135deg,#ff6600,#ffcc00);border-radius:2px;font-size:9px;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;border:1px solid rgba(0,0,0,0.3)">F</div>
+      Macromedia Flash MX 2004
+    </div>
+    <div class="splash-body">
+      <div class="splash-logo">⚡</div>
+      <div class="splash-text">
+        <h1>Flash MX 2004</h1>
+        <p style="color:#ff6600;font-weight:bold;margin-bottom:4px">guyphenix.swf</p>
+        <p>Loading Guy Phenix website...<br>Please wait while assets are loaded.</p>
+        <p style="margin-top:6px;font-size:10px;color:#888">Serial: MX04-PRO-1994-GPHX</p>
+      </div>
+    </div>
+    <div class="splash-progress">
+      <div class="splash-progress-label"><span id="loading-text">Initialising ActionScript...</span><span id="loading-pct">0%</span></div>
+      <div class="splash-bar-outer"><div class="splash-bar-inner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP FRAME -->
+<div id="app-frame">
+
+  <!-- TITLE BAR -->
+  <div id="titlebar">
+    <div class="tb-icon">F</div>
+    <div class="tb-title">Macromedia Flash MX 2004 — [guyphenix.fla]</div>
+    <div class="tb-btn">_</div>
+    <div class="tb-btn">□</div>
+    <div class="tb-btn" style="color:#c00">✕</div>
+  </div>
+
+  <!-- MENU BAR -->
+  <div id="menubar">
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Insert</span>
+    <span class="menu-item">Modify</span>
+    <span class="menu-item">Text</span>
+    <span class="menu-item">Control</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+
+  <!-- TOOLBARS -->
+  <div id="toolbars">
+    <div class="toolbar">
+      <button class="t-btn" title="New">📄</button>
+      <button class="t-btn" title="Open">📂</button>
+      <button class="t-btn" title="Save">💾</button>
+      <div class="toolbar-sep"></div>
+      <button class="t-btn" title="Cut">✂</button>
+      <button class="t-btn" title="Copy">⎘</button>
+      <button class="t-btn" title="Paste">📋</button>
+      <div class="toolbar-sep"></div>
+      <button class="t-btn" title="Undo">↩</button>
+      <button class="t-btn" title="Redo">↪</button>
+      <div class="toolbar-sep"></div>
+      <span class="t-label">Zoom:</span>
+      <input class="t-input" value="100%" readonly style="width:50px">
+      <div class="toolbar-sep"></div>
+      <span class="t-label">Scene:</span>
+      <input class="t-input" value="Scene 1" readonly style="width:70px">
+      <div class="toolbar-sep"></div>
+      <button class="t-btn flash-timeline-btn" style="background:#cc0000;border-color:#ff4444 #880000 #880000 #ff4444">● REC</button>
+      <button class="t-btn flash-timeline-btn">▶ TEST</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div id="workspace">
+
+    <!-- PHOTOSHOP TOOLS PANEL -->
+    <div id="ps-tools">
+      <div class="ps-tool active" title="Move">✦</div>
+      <div class="ps-tool" title="Select">⬚</div>
+      <div class="ps-tool" title="Lasso">⌇</div>
+      <div class="ps-tool" title="Crop">⊡</div>
+      <div class="ps-tool-sep"></div>
+      <div class="ps-tool" title="Brush">✏</div>
+      <div class="ps-tool" title="Stamp">S</div>
+      <div class="ps-tool" title="Eraser">◻</div>
+      <div class="ps-tool" title="Fill">⬟</div>
+      <div class="ps-tool-sep"></div>
+      <div class="ps-tool" title="Text">T</div>
+      <div class="ps-tool" title="Pen">✒</div>
+      <div class="ps-tool" title="Zoom">🔍</div>
+      <div class="ps-tool-sep"></div>
+      <div class="ps-colors">
+        <div class="ps-bg-color"></div>
+        <div class="ps-fg-color"></div>
+      </div>
+    </div>
+
+    <!-- CANVAS -->
+    <div id="canvas-area">
+
+      <!-- PHOTO WINDOW -->
+      <div id="photo-window">
+        <div class="pw-titlebar" id="photo-drag-handle">
+          <span class="pw-title">📷 guyphenix_photo.psd @ 100%</span>
+          <div class="pw-btn">_</div>
+          <div class="pw-btn">□</div>
+          <div class="pw-btn" style="color:#c00">✕</div>
+        </div>
+        <div class="pw-tabs">
+          <div class="pw-tab active" onclick="switchTab('photo', this)">Photo</div>
+          <div class="pw-tab" onclick="switchTab('about', this)">About</div>
+          <div class="pw-tab" onclick="switchTab('links', this)">Links</div>
+        </div>
+
+        <!-- Photo tab -->
+        <div class="pw-content active" id="tab-photo">
+          <div class="photo-inset">
+            <img src="https://media.licdn.com/dms/image/v2/C4D03AQHEt7zJpLoNaQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1647874543937?e=2147483647&v=beta&t=OcGG6cnb-zLINwHvYme7THiEg0tknesZe5bi5ovBrE8"
+                 alt="Guy Phenix"
+                 id="profile-img"
+                 onerror="this.src='/mnt/user-data/uploads/54.jpg'">
+          </div>
+          <div class="photo-info-strip">
+            <span class="pi-item">RGB <span>8</span></span>
+            <span class="pi-item">400×400 <span>px</span></span>
+            <span class="pi-item">Doc: <span>468K</span></span>
+          </div>
+          <div class="photo-controls">
+            <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+            <input type="range" class="zoom-slider" id="zoom-slider" min="50" max="200" value="100" oninput="setZoom(this.value)">
+            <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+            <span class="zoom-label" id="zoom-label">100%</span>
+          </div>
+        </div>
+
+        <!-- About tab -->
+        <div class="pw-content" id="tab-about">
+          <div class="about-content">
+            <h2>Guy Phenix</h2>
+            <p>Independent television producer working in children's content for BBC Children's (CBBC &amp; CBeebies), with a focus on animation, European co-production, and financing.</p>
+            <p>Building web tools to support the production industry at:<br>
+              <a href="https://guyphenix.github.io/exp/" style="color:#0a246a">guyphenix.github.io/exp/</a>
+            </p>
+            <p style="font-size:10px;color:#888;border-top:1px solid #ccc;padding-top:6px;margin-top:4px">
+              © 2003 Guy Phenix · Built with Flash MX 2004
+            </p>
+          </div>
+        </div>
+
+        <!-- Links tab -->
+        <div class="pw-content" id="tab-links">
+          <div class="li-content">
+            <a class="li-link-btn" href="https://linkedin.com/in/guyphenix" target="_blank">
+              <div class="li-icon">in</div>
+              <div>
+                <div class="li-text">LinkedIn Profile</div>
+                <div class="li-sub">linkedin.com/in/guyphenix</div>
+              </div>
+              <span style="margin-left:auto;font-size:10px;opacity:0.5">→</span>
+            </a>
+            <div class="li-note">Click to open in your default browser. This action will take you outside Flash.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLASH PROPERTIES PANEL -->
+      <div id="flash-panel">
+        <div class="fp-titlebar" id="flash-drag-handle">
+          <div class="fp-dot red"></div>
+          <div class="fp-dot yellow"></div>
+          <div class="fp-dot green"></div>
+          <span class="fp-title">PROPERTIES</span>
+        </div>
+        <div class="fp-section">
+          <div class="fp-section-title">Document</div>
+          <div class="fp-row"><span class="fp-label">Frame rate</span><span class="fp-val">24 fps</span></div>
+          <div class="fp-row"><span class="fp-label">Size</span><span class="fp-val text-val">800×600</span></div>
+          <div class="fp-row"><span class="fp-label">BG Colour</span><span class="fp-val">■ #1a1a1a</span></div>
+          <div class="fp-row"><span class="fp-label">Version</span><span class="fp-val text-val">Flash 7</span></div>
+        </div>
+        <div class="fp-section">
+          <div class="fp-section-title">Layer: photo</div>
+          <div class="fp-row"><span class="fp-label">Type</span><span class="fp-val text-val">MovieClip</span></div>
+          <div class="fp-row"><span class="fp-label">X</span><span class="fp-val" id="fp-x">80.0</span></div>
+          <div class="fp-row"><span class="fp-label">Y</span><span class="fp-val" id="fp-y">60.0</span></div>
+          <div class="fp-row"><span class="fp-label">W</span><span class="fp-val">320.0</span></div>
+          <div class="fp-row"><span class="fp-label">Alpha</span><span class="fp-val">100%</span></div>
+        </div>
+        <div class="fp-section">
+          <div class="fp-section-title">ActionScript</div>
+          <div class="fp-row" style="padding:4px 8px">
+            <pre style="font-size:9px;color:#7ec8ff;background:#1a1a1a;padding:4px;border:1px solid #333;line-height:1.5;overflow:hidden">on(press){
+  startDrag(this);
+}
+on(release){
+  stopDrag();
+}</pre>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /canvas-area -->
+
+  </div><!-- /workspace -->
+
+  <!-- FLASH TIMELINE -->
+  <div id="flash-timeline">
+    <div id="tl-header">
+      <div class="tl-tab active">Timeline</div>
+      <div class="tl-tab">Motion Editor</div>
+      <div class="tl-tab">Output</div>
+      <div class="tl-controls-row">
+        <span class="tl-ctrl">⏮</span>
+        <span class="tl-ctrl">◁</span>
+        <span class="tl-ctrl" id="tl-play" onclick="togglePlay()">▶</span>
+        <span class="tl-ctrl">▷</span>
+        <span class="tl-ctrl">⏭</span>
+        <span class="tl-ctrl" style="color:#ffcc00;border-color:#665500;">🔁 LOOP</span>
+        <span style="font-size:10px;color:#ff6600;margin-left:8px;font-weight:bold" id="frame-counter">1</span>
+        <span style="font-size:10px;color:#666">/ 48</span>
+      </div>
+    </div>
+    <div id="tl-body">
+      <div id="tl-layers">
+        <div class="tl-layer active">
+          <span class="tl-layer-icon">👁</span>
+          <span class="tl-layer-icon">🔒</span>
+          photo
+        </div>
+        <div class="tl-layer">
+          <span class="tl-layer-icon">👁</span>
+          <span class="tl-layer-icon">🔒</span>
+          text_name
+        </div>
+        <div class="tl-layer">
+          <span class="tl-layer-icon">👁</span>
+          <span class="tl-layer-icon">🔒</span>
+          background
+        </div>
+      </div>
+      <div id="tl-frames">
+        <div class="tl-frame-numbers" id="frame-numbers"></div>
+        <div class="tl-track-row" id="track-photo"></div>
+        <div class="tl-track-row" id="track-text"></div>
+        <div class="tl-track-row" id="track-bg"></div>
+        <div id="playhead-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div id="statusbar">
+    <div class="sb-panel" id="sb-coords">X: 0 Y: 0</div>
+    <div class="sb-panel">guyphenix.fla</div>
+    <div class="sb-panel" style="color:#0a246a;font-weight:bold">Flash Player 7</div>
+    <div class="sb-panel" style="margin-left:auto">ActionScript 2.0</div>
+  </div>
+
+</div><!-- /app-frame -->
+
+<script>
+// ── BUILD TIMELINE FRAMES ──
+function buildTimeline() {
+  const numNums = document.getElementById('frame-numbers');
+  const trackPhoto = document.getElementById('track-photo');
+  const trackText = document.getElementById('track-text');
+  const trackBg = document.getElementById('track-bg');
+
+  for (let i = 1; i <= 48; i++) {
+    // Numbers
+    const n = document.createElement('div');
+    n.className = 'tl-frame-num';
+    n.textContent = i % 5 === 0 ? i : '';
+    numNums.appendChild(n);
+
+    // Photo track - keyframes at 1, 12, 24, 36, 48
+    const kp = [1, 12, 24, 36, 48];
+    const cp = document.createElement('div');
+    cp.className = 'tl-cell filled' + (kp.includes(i) ? ' keyframe' : '');
+    trackPhoto.appendChild(cp);
+
+    // Text track
+    const kt = [1, 24, 48];
+    const ct = document.createElement('div');
+    ct.className = 'tl-cell filled' + (kt.includes(i) ? ' keyframe' : '');
+    trackText.appendChild(ct);
+
+    // BG track
+    const cb = document.createElement('div');
+    cb.className = 'tl-cell filled' + (i === 1 ? ' keyframe' : '');
+    trackBg.appendChild(cb);
+  }
+}
+buildTimeline();
+
+// ── DRAG WINDOWS ──
+function makeDraggable(el, handle) {
+  let ox = 0, oy = 0, mx = 0, my = 0;
+  handle.addEventListener('mousedown', e => {
+    e.preventDefault();
+    mx = e.clientX; my = e.clientY;
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', () => document.removeEventListener('mousemove', drag));
+  });
+  function drag(e) {
+    ox = mx - e.clientX; oy = my - e.clientY;
+    mx = e.clientX; my = e.clientY;
+    el.style.top = (el.offsetTop - oy) + 'px';
+    el.style.left = (el.offsetLeft - ox) + 'px';
+    // Update properties panel
+    document.getElementById('fp-x').textContent = el.offsetLeft.toFixed(1);
+    document.getElementById('fp-y').textContent = el.offsetTop.toFixed(1);
+  }
+}
+makeDraggable(document.getElementById('photo-window'), document.getElementById('photo-drag-handle'));
+makeDraggable(document.getElementById('flash-panel'), document.getElementById('flash-drag-handle'));
+
+// Bring to front on click
+['photo-window','flash-panel'].forEach(id => {
+  document.getElementById(id).addEventListener('mousedown', function() {
+    document.getElementById('photo-window').style.zIndex = 99;
+    document.getElementById('flash-panel').style.zIndex = 99;
+    this.style.zIndex = 100;
+  });
+});
+
+// ── TABS ──
+function switchTab(name, el) {
+  document.querySelectorAll('.pw-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pw-content').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── ZOOM ──
+let zoom = 100;
+function setZoom(v) {
+  zoom = parseInt(v);
+  document.getElementById('zoom-label').textContent = zoom + '%';
+  document.getElementById('zoom-slider').value = zoom;
+  document.getElementById('profile-img').style.transform = `scale(${zoom/100})`;
+  document.getElementById('profile-img').style.transformOrigin = 'top center';
+}
+function changeZoom(delta) {
+  setZoom(Math.min(200, Math.max(50, zoom + delta)));
+}
+
+// ── PLAYHEAD ANIMATION ──
+let playing = false;
+let frame = 1;
+let playInterval;
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('tl-play').textContent = playing ? '⏸' : '▶';
+  document.getElementById('tl-play').style.color = playing ? '#ff0000' : '';
+  if (playing) {
+    playInterval = setInterval(advanceFrame, 1000/12);
+  } else {
+    clearInterval(playInterval);
+  }
+}
+function advanceFrame() {
+  frame = (frame % 48) + 1;
+  document.getElementById('frame-counter').textContent = frame;
+  // Move playhead
+  const ph = document.getElementById('playhead-bar');
+  const framesEl = document.getElementById('tl-frames');
+  const cellW = 20;
+  ph.style.left = (cellW * frame) + 'px';
+  // Subtle sway on photo window when "playing"
+  const pw = document.getElementById('photo-window');
+  pw.style.transform = `translateY(${Math.sin(frame * 0.3) * 0.5}px)`;
+}
+
+// ── CURSOR COORDS ──
+document.addEventListener('mousemove', e => {
+  document.getElementById('sb-coords').textContent = `X: ${e.clientX}  Y: ${e.clientY}`;
+});
+
+// ── SPLASH LOADING TEXT ──
+const msgs = ['Initialising ActionScript...','Loading guyphenix.swf...','Rendering layers...','Decompressing assets...','Ready.'];
+let mi = 0;
+const lt = document.getElementById('loading-text');
+const lp = document.getElementById('loading-pct');
+const msgInterval = setInterval(() => {
+  mi++;
+  if (mi >= msgs.length) { clearInterval(msgInterval); return; }
+  lt.textContent = msgs[mi];
+  lp.textContent = Math.round((mi / (msgs.length - 1)) * 100) + '%';
+}, 500);
+
+// ── CLICK RIPPLES ──
+document.addEventListener('click', e => {
+  const r = document.createElement('div');
+  r.className = 'click-ripple';
+  r.style.left = e.clientX + 'px';
+  r.style.top = e.clientY + 'px';
+  document.body.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+});
+</script>
+</body>
+</html>
