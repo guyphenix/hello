@@ -651,13 +651,22 @@ body::after {
 }
 .splash-card-footer span { color: var(--nx-purple); font-weight: bold; }
 
-/* ── STICKMAN WINDOW ── */
+/* ── BANANA WINDOW ── */
 #stickman-window { top: 50px; left: 720px; width: 300px; }
-#stickman-canvas {
-  width: 100%; height: 260px;
-  display: block;
-  background: var(--nx-panel);
-  cursor: crosshair;
+#banana-wrap {
+  background: var(--nx-black);
+  width: 100%;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#banana-gif {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 /* ── DOOM SCREENSAVER WINDOW ── */
@@ -678,7 +687,73 @@ body::after {
   display: flex; align-items: center; gap: 5px;
 }
 
-/* Click ripples — lime this time */
+/* ══════════════════════════════════════
+   MOBILE — vertical stacked layout
+   ══════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  /* Hide chrome that doesn't make sense on mobile */
+  #ps-tools,
+  #toolbars { display: none; }
+
+  #titlebar { height: 28px; }
+  #titlebar .tb-title { font-size: 10px; }
+
+  #workspace {
+    flex-direction: column;
+    overflow: visible;
+    height: auto;
+  }
+
+  #canvas-area {
+    overflow: visible;
+    height: auto;
+    min-height: 100vh;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* All windows become static stacked blocks */
+  .nx-window {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.5), 3px 3px 0 1px var(--nx-purple);
+  }
+
+  /* Disable drag cursor on mobile — can't drag static elements */
+  .nx-titlebar { cursor: default; }
+
+  /* Make canvases fill window width */
+  #doom-canvas {
+    height: 200px;
+  }
+
+  /* Shrink photo */
+  .photo-inset { aspect-ratio: 1; max-height: 260px; }
+
+  /* Status bar wraps */
+  #statusbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  /* Splash card fits screen */
+  #splash-card { width: 92vw; }
+  .splash-brand-name { font-size: 16px; }
+}
+
 .click-ripple {
   position: fixed;
   width: 20px; height: 20px;
@@ -897,17 +972,22 @@ body::after {
         </div>
       </div>
 
-      <!-- STICKMAN WINDOW -->
+      <!-- BANANA WINDOW -->
       <div class="nx-window" id="stickman-window">
         <div class="nx-titlebar fw-drag-handle" data-window="stickman-window">
-          <span class="win-icon">🚶</span>
-          <span class="win-title">stickman.exe</span>
+          <span class="win-icon">🍌</span>
+          <span class="win-title">banana.gif</span>
           <div class="nx-win-btn">_</div>
           <div class="nx-win-btn">□</div>
           <div class="nx-win-btn close fw-close" data-window="stickman-window">✕</div>
         </div>
-        <canvas id="stickman-canvas"></canvas>
-        <div class="win-footer">Click anywhere to move him</div>
+        <div id="banana-wrap">
+          <img id="banana-gif"
+               src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
+               alt="cool banana"
+               onerror="this.src='https://media2.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'">
+        </div>
+        <div class="win-footer">🍌 banana.gif · 1997 · 2.4KB</div>
       </div>
 
       <!-- PIPES SCREENSAVER WINDOW -->
@@ -938,35 +1018,58 @@ body::after {
 </div><!-- /app-frame -->
 
 <script>
-// ── POSITION WINDOWS (responsive to viewport) ──
+// ── DETECT MOBILE ──
+const isMobile = () => window.innerWidth <= 640;
+
+// ── POSITION WINDOWS ──
 function positionWindows() {
-  document.getElementById('photo-window').style.cssText += ';top:50px;left:70px;';
-  document.getElementById('about-window').style.cssText += ';top:50px;left:400px;width:290px;';
-  document.getElementById('links-window').style.cssText += ';top:310px;left:400px;width:290px;';
+  if (isMobile()) return; // mobile uses static CSS stacking
+  document.getElementById('photo-window').style.cssText    += ';top:50px;left:70px;';
+  document.getElementById('about-window').style.cssText    += ';top:50px;left:400px;width:290px;';
+  document.getElementById('links-window').style.cssText    += ';top:310px;left:400px;width:290px;';
+  document.getElementById('stickman-window').style.cssText += ';top:50px;left:720px;width:300px;';
+  document.getElementById('doom-window').style.cssText     += ';top:50px;left:1040px;width:300px;';
 }
 positionWindows();
 
-// ── DRAG WINDOWS ──
+// ── DRAG WINDOWS (mouse + touch) ──
 function makeDraggable(el, handle) {
   let ox = 0, oy = 0, mx = 0, my = 0;
-  handle.addEventListener('mousedown', e => {
-    // Don't drag if clicking a button
-    if (e.target.classList.contains('nx-win-btn')) return;
-    e.preventDefault();
-    mx = e.clientX; my = e.clientY;
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stop);
-  });
-  function drag(e) {
-    ox = mx - e.clientX; oy = my - e.clientY;
-    mx = e.clientX; my = e.clientY;
+
+  function startDrag(cx, cy) {
+    mx = cx; my = cy;
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup',   onMouseUp);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend',  onTouchEnd);
+  }
+  function doDrag(cx, cy) {
+    ox = mx - cx; oy = my - cy;
+    mx = cx; my = cy;
     el.style.top  = (el.offsetTop  - oy) + 'px';
     el.style.left = (el.offsetLeft - ox) + 'px';
   }
-  function stop() {
-    document.removeEventListener('mousemove', drag);
-    document.removeEventListener('mouseup', stop);
+  function stopDrag() {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup',   onMouseUp);
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend',  onTouchEnd);
   }
+  function onMouseMove(e) { doDrag(e.clientX, e.clientY); }
+  function onMouseUp()    { stopDrag(); }
+  function onTouchMove(e) { e.preventDefault(); doDrag(e.touches[0].clientX, e.touches[0].clientY); }
+  function onTouchEnd()   { stopDrag(); }
+
+  handle.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('nx-win-btn')) return;
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
+  });
+  handle.addEventListener('touchstart', e => {
+    if (e.target.classList.contains('nx-win-btn')) return;
+    if (isMobile()) return; // no drag on mobile — windows are static
+    startDrag(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
 }
 
 makeDraggable(document.getElementById('photo-window'), document.getElementById('photo-drag-handle'));
@@ -1022,164 +1125,6 @@ document.addEventListener('click', e => {
   document.body.appendChild(r);
   setTimeout(() => r.remove(), 600);
 });
-
-// ── STICKMAN ──
-(function() {
-  const canvas = document.getElementById('stickman-canvas');
-  const ctx    = canvas.getContext('2d');
-
-  function resize() {
-    const r = canvas.getBoundingClientRect();
-    canvas.width  = r.width  || 300;
-    canvas.height = r.height || 260;
-  }
-  resize();
-
-  const W = () => canvas.width;
-  const H = () => canvas.height;
-
-  // Stickman state
-  let man = { x: 120, y: 0, vx: 0, vy: 0, targetX: 120, facing: 1, state: 'idle', frame: 0 };
-  let onGround = false;
-  const GROUND_Y = () => H() - 30;
-  const GRAVITY  = 0.6;
-  const SPEED    = 2.2;
-
-  // Click inside canvas to set target
-  canvas.addEventListener('click', e => {
-    const r = canvas.getBoundingClientRect();
-    man.targetX = e.clientX - r.left;
-    man.state   = 'walk';
-  });
-
-  function drawStickman(x, y, frame, facing, state) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(facing, 1);
-
-    const C = '#6600cc'; // body colour
-    const W2 = 1.8;
-    ctx.strokeStyle = C;
-    ctx.lineWidth   = W2;
-    ctx.lineCap     = 'round';
-
-    // Head
-    ctx.beginPath();
-    ctx.arc(0, -38, 8, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Body
-    ctx.beginPath();
-    ctx.moveTo(0, -30);
-    ctx.lineTo(0, -8);
-    ctx.stroke();
-
-    const t = frame * 0.25;
-
-    if (state === 'walk') {
-      // Arms swing
-      ctx.beginPath();
-      ctx.moveTo(0, -24);
-      ctx.lineTo(12 * Math.cos(t + 1), -16 + 6 * Math.sin(t + 1));
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -24);
-      ctx.lineTo(-12 * Math.cos(t + 1), -16 - 6 * Math.sin(t + 1));
-      ctx.stroke();
-
-      // Legs stride
-      ctx.beginPath();
-      ctx.moveTo(0, -8);
-      ctx.lineTo(10 * Math.sin(t), 6);
-      ctx.lineTo(14 * Math.sin(t) + 2, 20);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -8);
-      ctx.lineTo(-10 * Math.sin(t), 6);
-      ctx.lineTo(-14 * Math.sin(t) - 2, 20);
-      ctx.stroke();
-
-    } else if (state === 'jump') {
-      // Arms up
-      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(-14,-32); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(14,-32);  ctx.stroke();
-      // Legs tuck
-      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(-10,4); ctx.lineTo(-6,14); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(10,4);  ctx.lineTo(6,14);  ctx.stroke();
-
-    } else {
-      // Idle — subtle breathe
-      const breathe = Math.sin(frame * 0.05) * 1.5;
-      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(-12,-16 + breathe); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(12,-16 + breathe);  ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(-8,8);  ctx.lineTo(-6,20); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(8,8);   ctx.lineTo(6,20);  ctx.stroke();
-    }
-
-    ctx.restore();
-  }
-
-  let tick = 0;
-  function loop() {
-    ctx.clearRect(0, 0, W(), H());
-
-    // Floor
-    ctx.fillStyle = '#e8e8e0';
-    ctx.fillRect(0, 0, W(), H());
-
-    // Checkerboard floor strip
-    for (let i = 0; i < Math.ceil(W()/20); i++) {
-      ctx.fillStyle = (i % 2 === 0) ? '#d4d0c8' : '#c8c4bc';
-      ctx.fillRect(i * 20, GROUND_Y() + 10, 20, 20);
-    }
-
-    // Shadow
-    const shadowW = man.state === 'jump' ? 8 : 16;
-    ctx.beginPath();
-    ctx.ellipse(man.x, GROUND_Y() + 12, shadowW, 4, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.fill();
-
-    // Physics
-    man.vy += GRAVITY;
-    man.y  += man.vy;
-
-    if (man.y >= GROUND_Y()) {
-      man.y  = GROUND_Y();
-      man.vy = 0;
-      onGround = true;
-    } else {
-      onGround = false;
-      man.state = 'jump';
-    }
-
-    if (onGround) {
-      const dx = man.targetX - man.x;
-      if (Math.abs(dx) > 4) {
-        man.facing = dx > 0 ? 1 : -1;
-        man.x += SPEED * man.facing;
-        man.state = 'walk';
-      } else {
-        man.state = 'idle';
-        man.vx    = 0;
-        // Occasionally idle-jump
-        if (Math.random() < 0.002) man.vy = -10;
-      }
-    }
-
-    // Keep on screen
-    man.x = Math.max(16, Math.min(W() - 16, man.x));
-
-    drawStickman(man.x, man.y, tick, man.facing, man.state);
-    tick++;
-    requestAnimationFrame(loop);
-  }
-
-  // Init on ground
-  man.y = GROUND_Y();
-  loop();
-  window.addEventListener('resize', resize);
-})();
 
 // ── WINDOWS PIPES SCREENSAVER ──
 (function() {
