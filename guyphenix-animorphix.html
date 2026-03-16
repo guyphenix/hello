@@ -5,383 +5,258 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guy Phenix :: Animorphix Studio 98</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Tahoma&family=Verdana&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lucida+Grande&family=Helvetica+Neue:wght@300;400;500;700&display=swap');
 
 :root {
-  /* Animorphix Y2K palette */
-  --nx-black:    #0d0d0d;
-  --nx-purple:   #6600cc;
-  --nx-purple2:  #9933ff;
-  --nx-lime:     #aaff00;
-  --nx-lime2:    #ccff33;
-  --nx-white:    #f0f0f0;
-  --nx-grey:     #e8e8e0;
-  --nx-midgrey:  #c8c8c0;
-  --nx-darkgrey: #888880;
-  --nx-panel:    #f2f2ea;
+  /* Mac OS X Aqua palette */
+  --osx-blue:       #4a90d9;
+  --osx-blue2:      #1a5fb4;
+  --osx-titlebar1:  #c8c8c8;
+  --osx-titlebar2:  #a0a0a0;
+  --osx-titlebar3:  #b8b8b8;
+  --osx-metal1:     #d8d8d8;
+  --osx-metal2:     #b0b0b0;
+  --osx-panel:      #ececec;
+  --osx-panel2:     #f5f5f5;
+  --osx-border:     #999999;
+  --osx-border2:    #bbbbbb;
+  --osx-text:       #1a1a1a;
+  --osx-text2:      #555555;
+  --osx-white:      #ffffff;
+  --osx-stripe:     rgba(255,255,255,0.07);
+  --osx-shadow:     rgba(0,0,0,0.35);
 
-  /* Win98-style borders recoloured */
-  --win-light:   #ffffff;
-  --win-dark:    #888880;
-  --win-darker:  #444440;
+  /* Traffic lights */
+  --tl-close:       #ff5f57;
+  --tl-close2:      #e0443e;
+  --tl-min:         #febc2e;
+  --tl-min2:        #d4a020;
+  --tl-max:         #28c840;
+  --tl-max2:        #1aaa30;
 
-  /* Title bar: purple gradient */
-  --title-start: #4400aa;
-  --title-end:   #9933ff;
+  /* Desktop */
+  --desktop-start:  #1c6ea4;
+  --desktop-end:    #4a9fd4;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Tahoma', 'Verdana', sans-serif;
-  font-size: 11px;
-  background: var(--nx-black);
+  font-family: 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  background: linear-gradient(160deg, var(--desktop-start) 0%, var(--desktop-end) 100%);
   height: 100vh;
   overflow: hidden;
   cursor: default;
   position: relative;
 }
 
-/* ── SCANLINE OVERLAY ── */
-body::after {
+/* Subtle desktop texture */
+body::before {
   content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.04) 2px,
-    rgba(0,0,0,0.04) 4px
-  );
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 60%),
+                    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 50%);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 0;
 }
 
-/* ── OUTER APP FRAME ── */
-#app-frame {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  border: 2px solid;
-  border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
-  background: var(--nx-grey);
-}
-
-/* ── TITLE BAR ── */
-#titlebar {
-  height: 24px;
-  background: linear-gradient(to right, var(--title-start), var(--title-end));
-  display: flex;
-  align-items: center;
-  padding: 0 4px;
-  gap: 6px;
-  flex-shrink: 0;
-  user-select: none;
-  position: relative;
-  overflow: hidden;
-}
-/* Memphis zigzag stripe on titlebar */
-#titlebar::before {
-  content: '';
-  position: absolute;
-  right: 100px; top: 0; bottom: 0;
-  width: 200px;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0px,
-    transparent 6px,
-    rgba(170,255,0,0.15) 6px,
-    rgba(170,255,0,0.15) 8px
+/* ── MAC OS X MENU BAR ── */
+#osx-menubar {
+  height: 22px;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,0.92) 0%,
+    rgba(230,230,230,0.88) 50%,
+    rgba(210,210,210,0.9) 100%
   );
-  pointer-events: none;
-}
-.tb-logo {
-  width: 18px; height: 18px;
-  flex-shrink: 0;
-}
-#titlebar .tb-title {
-  color: var(--nx-white);
-  font-size: 11px;
-  font-weight: bold;
-  flex: 1;
-  letter-spacing: 0.3px;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-}
-.tb-title span {
-  color: var(--nx-lime);
-  font-weight: bold;
-}
-.tb-btn {
-  width: 16px; height: 14px;
-  background: var(--nx-grey);
-  border: 1px solid;
-  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-  font-size: 9px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  color: #000;
-  font-weight: bold;
-}
-.tb-btn:active {
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-}
-.tb-btn.close-btn { color: #c00; font-weight: bold; }
-
-/* ── MENU BAR ── */
-#menubar {
-  height: 20px;
-  background: var(--nx-panel);
-  border-bottom: 2px solid var(--nx-purple);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.25);
   display: flex;
   align-items: center;
-  padding: 0 2px;
-  flex-shrink: 0;
-}
-.menu-item {
-  padding: 2px 8px;
-  font-size: 11px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  color: var(--nx-black);
-}
-.menu-item:hover {
-  background: var(--nx-purple);
-  color: var(--nx-lime);
-  border-color: var(--nx-purple2) var(--nx-purple) var(--nx-purple) var(--nx-purple2);
-}
-
-/* ── TOOLBARS ── */
-#toolbars { display: flex; flex-direction: column; flex-shrink: 0; }
-.toolbar {
-  height: 28px;
-  background: var(--nx-panel);
-  border-bottom: 1px solid var(--nx-midgrey);
-  display: flex;
-  align-items: center;
-  padding: 0 6px;
+  padding: 0 8px;
   gap: 2px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 9000;
+  user-select: none;
 }
-.toolbar-sep {
-  width: 1px; height: 18px;
-  background: var(--win-dark);
-  margin: 0 3px;
-  border-right: 1px solid var(--win-light);
-}
-.t-btn {
-  width: 22px; height: 20px;
-  background: var(--nx-panel);
-  border: 1px solid transparent;
-  display: flex; align-items: center; justify-content: center;
+.osx-apple {
+  font-size: 14px;
+  padding: 0 8px;
+  color: #333;
   cursor: pointer;
+  line-height: 22px;
+}
+.osx-apple:hover { background: rgba(0,0,0,0.1); border-radius: 3px; }
+.osx-menu-item {
+  padding: 0 8px;
   font-size: 12px;
+  font-weight: 500;
+  color: #1a1a1a;
+  cursor: pointer;
+  line-height: 22px;
+  border-radius: 3px;
+}
+.osx-menu-item.app-name { font-weight: 700; }
+.osx-menu-item:hover { background: var(--osx-blue); color: white; }
+.osx-menubar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
   color: #333;
 }
-.t-btn:hover {
-  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-  background: #fff;
-}
-.t-btn:active {
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-}
-.t-label { font-size: 11px; color: #555; padding: 0 4px; font-weight: bold; }
-.t-input {
-  height: 18px;
-  background: white;
-  border: 1px solid;
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-  font-size: 11px;
-  font-family: 'Tahoma', sans-serif;
-  padding: 0 3px;
-  color: #000;
-}
-.nx-action-btn {
-  background: var(--nx-purple);
-  color: var(--nx-lime);
-  border: 1px solid;
-  border-color: var(--nx-purple2) var(--nx-black) var(--nx-black) var(--nx-purple2);
-  font-size: 9px;
-  height: 20px;
-  padding: 0 8px;
-  font-weight: bold;
-  white-space: nowrap;
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  font-family: 'Tahoma', sans-serif;
-}
-.nx-action-btn:hover { background: var(--nx-purple2); }
+.osx-menubar-right span { padding: 0 4px; cursor: pointer; }
+.osx-menubar-right span:hover { background: rgba(0,0,0,0.1); border-radius: 3px; }
 
-/* ── WORKSPACE ── */
-#workspace {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-  position: relative;
-}
-
-/* ── LEFT TOOLS ── */
-#ps-tools {
-  width: 30px;
-  background: var(--nx-panel);
-  border-right: 2px solid var(--nx-purple);
-  padding: 4px 3px;
+/* ── OUTER APP FRAME / DESKTOP ── */
+#app-frame {
+  position: absolute;
+  top: 22px; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.ps-tool {
-  width: 22px; height: 22px;
-  background: var(--nx-panel);
-  border: 1px solid transparent;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 12px;
-}
-.ps-tool:hover, .ps-tool.active {
-  background: var(--nx-purple);
-  color: var(--nx-lime);
-  border-color: var(--nx-purple2) var(--nx-black) var(--nx-black) var(--nx-purple2);
-}
-.ps-tool-sep {
-  height: 2px;
-  background: var(--nx-purple);
-  margin: 3px 0;
-  opacity: 0.3;
-}
-.ps-colors { margin-top: auto; position: relative; width: 22px; height: 22px; }
-.ps-bg-color {
-  position: absolute; bottom: 0; right: 0;
-  width: 13px; height: 13px;
-  background: var(--nx-lime); border: 1px solid #000;
-}
-.ps-fg-color {
-  position: absolute; top: 0; left: 0;
-  width: 13px; height: 13px;
-  background: var(--nx-purple); border: 1px solid #000;
+  overflow: hidden;
 }
 
-/* ── CANVAS AREA ── */
+/* ── CANVAS / DESKTOP AREA ── */
 #canvas-area {
   flex: 1;
   position: relative;
   overflow: hidden;
-  /* Memphis-style dotted/geometric background */
-  background-color: #1a1a2e;
-  background-image:
-    radial-gradient(circle, rgba(170,255,0,0.12) 1px, transparent 1px),
-    radial-gradient(circle, rgba(102,0,204,0.2) 1px, transparent 1px);
-  background-size: 24px 24px, 48px 48px;
-  background-position: 0 0, 12px 12px;
 }
-/* Memphis decorative shapes on canvas bg */
-#canvas-area::before {
-  content: '';
+
+/* ── STATUS BAR (Dock-style) ── */
+#statusbar {
+  height: 26px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(0,0,0,0.15));
+  border-top: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  backdrop-filter: blur(8px);
+}
+.sb-panel {
+  height: 16px;
+  padding: 0 8px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  font-size: 10px;
+  display: flex; align-items: center;
+  color: rgba(255,255,255,0.9);
+  min-width: 70px;
+  backdrop-filter: blur(4px);
+}
+.sb-panel.osx-brand {
+  background: rgba(74,144,217,0.5);
+  border-color: rgba(74,144,217,0.8);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: white;
+}
+
+/* ── SHARED MAC OS X WINDOW CHROME ── */
+.osx-window {
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(45deg, rgba(170,255,0,0.04) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(102,0,204,0.04) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(170,255,0,0.04) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(102,0,204,0.04) 75%);
-  background-size: 40px 40px;
+  background: var(--osx-panel);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.4);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.12),
+    0 8px 24px rgba(0,0,0,0.35),
+    0 0 0 0.5px rgba(255,255,255,0.15) inset;
+  overflow: hidden;
+  z-index: 100;
+  user-select: none;
+  min-width: 200px;
+}
+
+/* Brushed metal titlebar */
+.osx-titlebar {
+  height: 22px;
+  background: linear-gradient(to bottom,
+    #e0e0e0 0%,
+    #c8c8c8 40%,
+    #b8b8b8 60%,
+    #d0d0d0 100%
+  );
+  border-bottom: 1px solid #999;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 6px;
+  cursor: move;
+  position: relative;
+}
+/* Brushed metal lines */
+.osx-titlebar::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 1px,
+    rgba(255,255,255,0.18) 1px, rgba(255,255,255,0.18) 2px
+  );
+  pointer-events: none;
+  border-radius: 8px 8px 0 0;
+}
+/* Inactive state */
+.osx-window.inactive .osx-titlebar {
+  background: linear-gradient(to bottom, #f2f2f2 0%, #e0e0e0 50%, #d8d8d8 100%);
+}
+.osx-window.inactive .osx-tl-close  { background: #d0d0d0; border-color: #aaa; }
+.osx-window.inactive .osx-tl-min    { background: #d0d0d0; border-color: #aaa; }
+.osx-window.inactive .osx-tl-max    { background: #d0d0d0; border-color: #aaa; }
+.osx-window.inactive .osx-win-title { color: #888; }
+
+/* Traffic light buttons */
+.osx-traffic-lights {
+  display: flex; gap: 5px; align-items: center;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.osx-tl {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 1px solid;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7px;
+  color: transparent;
+  transition: filter 0.1s;
+}
+.osx-tl:hover { color: rgba(0,0,0,0.5); filter: brightness(0.9); }
+.osx-tl-close { background: var(--tl-close); border-color: var(--tl-close2); }
+.osx-tl-min   { background: var(--tl-min);   border-color: var(--tl-min2); }
+.osx-tl-max   { background: var(--tl-max);   border-color: var(--tl-max2); }
+
+.osx-win-title {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   pointer-events: none;
 }
 
-/* ── STATUS BAR ── */
-#statusbar {
-  height: 22px;
-  background: var(--nx-panel);
-  border-top: 2px solid var(--nx-purple);
-  display: flex;
-  align-items: center;
-  padding: 0 6px;
-  gap: 8px;
-  flex-shrink: 0;
+/* Window content area */
+.osx-win-body {
+  background: var(--osx-panel2);
 }
-.sb-panel {
-  height: 15px;
-  padding: 0 8px;
-  background: white;
-  border: 1px solid;
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-  font-size: 10px;
-  display: flex; align-items: center;
-  color: #333;
-  min-width: 80px;
-}
-.sb-panel.nx-brand {
-  background: var(--nx-purple);
-  color: var(--nx-lime);
-  border-color: var(--nx-purple2) var(--nx-black) var(--nx-black) var(--nx-purple2);
-  font-weight: bold;
-  letter-spacing: 0.5px;
-}
-
-/* ── SHARED WINDOW CHROME ── */
-.nx-window {
-  position: absolute;
-  background: var(--nx-panel);
-  border: 2px solid;
-  border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
-  box-shadow: 5px 5px 0 rgba(0,0,0,0.5), 5px 5px 0 1px var(--nx-purple);
-  z-index: 100;
-  user-select: none;
-}
-.nx-titlebar {
-  height: 22px;
-  background: linear-gradient(to right, var(--title-start), var(--title-end));
-  display: flex;
-  align-items: center;
-  padding: 0 5px;
-  gap: 5px;
-  cursor: move;
-  position: relative;
-  overflow: hidden;
-}
-/* Lime accent stripe on window titlebars */
-.nx-titlebar::after {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: var(--nx-lime);
-}
-.nx-titlebar .win-icon { font-size: 12px; flex-shrink: 0; padding-left: 2px; }
-.nx-titlebar .win-title {
-  color: var(--nx-white);
-  font-size: 11px;
-  font-weight: bold;
-  flex: 1;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-  letter-spacing: 0.3px;
-}
-.nx-win-btn {
-  width: 15px; height: 13px;
-  background: var(--nx-grey);
-  border: 1px solid;
-  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-  font-size: 8px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-weight: bold;
-  color: #000;
-}
-.nx-win-btn:active {
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-}
-.nx-win-btn.close { color: #cc0000; }
 
 /* ── PHOTO WINDOW ── */
-#photo-window {
-  top: 50px; left: 70px;
-  width: 300px;
-}
+#photo-window { top: 40px; left: 60px; width: 300px; }
 .photo-inset {
-  border: 2px solid;
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-  background: #444;
+  background: #222;
   width: 100%; aspect-ratio: 1;
   overflow: hidden; position: relative;
 }
@@ -390,374 +265,286 @@ body::after {
   object-fit: cover;
   object-position: top center;
   display: block;
-  filter: saturate(1.05) contrast(1.05);
 }
 .photo-info-strip {
   display: flex;
-  background: #e0e0d8;
-  border: 1px solid;
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
-  border-top: none;
-  padding: 2px 6px;
-  gap: 10px;
+  background: linear-gradient(to bottom, #e8e8e8, #dcdcdc);
+  border-top: 1px solid #bbb;
+  padding: 3px 8px;
+  gap: 12px;
 }
-.pi-item { font-size: 10px; color: #444; }
-.pi-item span { color: var(--nx-purple); font-weight: bold; }
+.pi-item { font-size: 10px; color: #555; }
+.pi-item span { color: var(--osx-blue2); font-weight: 600; }
 .photo-controls {
   display: flex; align-items: center;
-  margin: 6px 8px; gap: 4px;
+  padding: 6px 8px; gap: 6px;
+  background: linear-gradient(to bottom, #f0f0f0, #e8e8e8);
+  border-top: 1px solid #ccc;
 }
 .zoom-btn {
   width: 18px; height: 16px;
-  background: var(--nx-panel);
-  border: 1px solid;
-  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
-  font-size: 11px; font-weight: bold;
+  background: linear-gradient(to bottom, #f0f0f0, #d8d8d8);
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  font-size: 12px; font-weight: bold;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: #333;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
 }
-.zoom-btn:hover { background: var(--nx-purple); color: var(--nx-lime); }
+.zoom-btn:hover { background: linear-gradient(to bottom, #e8f4ff, #cce4f8); border-color: var(--osx-blue); }
+.zoom-btn:active { background: linear-gradient(to bottom, #c0d8f0, #a8c8e8); }
 .zoom-slider {
   flex: 1; height: 4px;
-  background: white;
-  border: 1px solid;
-  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  background: linear-gradient(to bottom, #aaa, #ccc);
+  border-radius: 2px;
+  border: 1px solid #999;
   appearance: none; -webkit-appearance: none;
   outline: none; cursor: pointer;
 }
 .zoom-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 10px; height: 14px;
-  background: var(--nx-purple);
-  border: 1px solid var(--nx-purple2);
+  width: 14px; height: 14px;
+  background: radial-gradient(circle at 40% 35%, #e8f4ff, #4a90d9);
+  border: 1px solid var(--osx-blue2);
+  border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
-.zoom-label { font-size: 10px; color: var(--nx-purple); font-weight: bold; width: 32px; text-align: center; }
+.zoom-label { font-size: 10px; color: var(--osx-blue2); font-weight: 600; width: 32px; text-align: center; }
 
 /* ── ABOUT WINDOW ── */
-#about-window { top: 50px; left: 400px; width: 290px; }
-.nx-win-body { padding: 10px 12px; background: var(--nx-panel); }
-.about-content { font-size: 11px; line-height: 1.7; color: #222; }
+#about-window { top: 40px; left: 390px; width: 290px; }
+.about-content { font-size: 12px; line-height: 1.7; color: #222; padding: 12px 14px; }
 .about-content h2 {
-  font-size: 13px; font-weight: bold; color: var(--nx-purple);
-  margin-bottom: 6px;
-  padding-bottom: 4px;
-  border-bottom: 2px solid var(--nx-lime);
-  display: flex; align-items: center; gap: 6px;
-  letter-spacing: 0.5px;
+  font-size: 14px; font-weight: 700; color: var(--osx-text);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #ddd;
 }
-.about-content h2::before {
-  content: '▶';
-  color: var(--nx-lime);
-  font-size: 8px;
-  background: var(--nx-purple);
-  padding: 2px 3px;
-}
-.about-content p { margin-bottom: 8px; }
-.about-content a { color: var(--nx-purple); font-weight: bold; text-decoration: none; }
-.about-content a:hover { color: var(--nx-purple2); text-decoration: underline; }
+.about-content p { margin-bottom: 8px; color: #444; }
+.about-content a { color: var(--osx-blue); text-decoration: none; }
+.about-content a:hover { text-decoration: underline; }
 .about-footer {
-  font-size: 10px; color: #888;
-  border-top: 1px solid var(--nx-midgrey);
-  padding-top: 6px; margin-top: 4px;
-  display: flex; align-items: center; gap: 6px;
-}
-.about-footer::before {
-  content: '';
-  display: inline-block; width: 8px; height: 8px;
-  background: var(--nx-lime); border-radius: 50%;
-  flex-shrink: 0;
+  font-size: 10px; color: #999;
+  border-top: 1px solid #e0e0e0;
+  padding: 8px 14px;
+  background: linear-gradient(to bottom, #f0f0f0, #e8e8e8);
 }
 
 /* ── LINKS WINDOW ── */
-#links-window { top: 310px; left: 400px; width: 290px; }
-.li-content { display: flex; flex-direction: column; gap: 8px; }
+#links-window { top: 310px; left: 390px; width: 290px; }
+.li-content { display: flex; flex-direction: column; gap: 1px; background: #ccc; }
 .li-link-btn {
   display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px;
-  background: white;
-  border: 2px solid var(--nx-midgrey);
-  cursor: pointer; text-decoration: none; color: #000;
+  padding: 10px 12px;
+  background: var(--osx-panel2);
+  cursor: pointer; text-decoration: none; color: #1a1a1a;
+  transition: background 0.1s;
 }
-.li-link-btn:hover {
-  background: var(--nx-purple);
-  color: var(--nx-lime);
-  border-color: var(--nx-purple2);
-}
+.li-link-btn:hover { background: linear-gradient(to bottom, #e8f4ff, #d0e8f8); }
+.li-link-btn:active { background: #c0d8f0; }
 .li-icon {
-  width: 26px; height: 26px;
-  background: #0077b5;
-  border-radius: 3px;
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, #0088cc, #0055aa);
+  border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   color: white; font-size: 14px; font-weight: bold;
   flex-shrink: 0; font-family: 'Georgia', serif;
-  border: 1px solid #005885;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
-.li-link-btn:hover .li-icon { background: var(--nx-lime); color: var(--nx-purple); border-color: var(--nx-lime2); }
-.li-text { font-size: 11px; font-weight: bold; }
-.li-sub { font-size: 10px; color: #666; }
-.li-link-btn:hover .li-sub { color: rgba(170,255,0,0.8); }
+.li-text { font-size: 12px; font-weight: 600; color: #1a1a1a; }
+.li-sub { font-size: 10px; color: #888; }
 .li-note {
-  font-size: 10px; color: #555;
-  border: 1px solid var(--nx-midgrey);
-  background: #fffff8;
-  padding: 5px 7px;
-  display: flex; gap: 5px; align-items: flex-start;
+  font-size: 10px; color: #666;
+  background: linear-gradient(to bottom, #f8f8f0, #f0f0e8);
+  padding: 8px 12px;
+  border-top: 1px solid #ddd;
+  display: flex; gap: 6px;
 }
-.li-note::before { content: 'ℹ'; color: var(--nx-purple); flex-shrink: 0; font-weight: bold; }
+.li-note::before { content: 'ℹ'; color: var(--osx-blue); flex-shrink: 0; font-weight: bold; }
 
-/* ── SPLASH / MORPH INTRO ── */
-#splash {
-  position: fixed; inset: 0;
-  background: var(--nx-black);
-  z-index: 10000;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
-  /* Memphis background */
-  background-image:
-    repeating-linear-gradient(45deg, rgba(170,255,0,0.03) 0px, rgba(170,255,0,0.03) 2px, transparent 2px, transparent 20px),
-    repeating-linear-gradient(-45deg, rgba(102,0,204,0.04) 0px, rgba(102,0,204,0.04) 2px, transparent 2px, transparent 20px);
-}
-
-/* The logo card that morphs into the app window */
-#splash-card {
-  width: 220px;
-  background: var(--nx-panel);
-  border: 2px solid;
-  border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.5), 6px 6px 0 2px var(--nx-purple);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-
-  /* Phase 1: sit still for 1.2s, then... */
-  /* Phase 2: snap-maximise over 0.18s with a tiny overshoot */
-  /* Phase 3: freeze full-screen, then app snaps in underneath */
-  animation: card-morph 0.22s cubic-bezier(0.2, 0, 0.8, 1.4) 1.4s forwards;
-  transform-origin: center center;
-}
-
-@keyframes card-morph {
-  0%   { width: 220px;  height: auto; transform: scale(1);    opacity: 1; }
-  60%  { transform: scale(1.04);  opacity: 1; }
-  90%  { transform: scale(1.0);   opacity: 1; }
-  100% { transform: scale(1.0);   opacity: 0; width: 100vw; height: 100vh; }
-}
-
-/* We fake the maximise by also animating the splash overlay itself */
-#splash {
-  animation: splash-bg-out 0.12s steps(1) 1.58s forwards;
-}
-@keyframes splash-bg-out {
-  to { opacity: 0; pointer-events: none; display: none; }
-}
-
-/* Win98-style maximise flash — white border flicker before reveal */
-#splash::after {
-  content: '';
-  position: fixed; inset: 0;
-  background: var(--win-light);
-  opacity: 0;
-  pointer-events: none;
-  animation: win-flash 0.18s steps(2) 1.4s forwards;
-}
-@keyframes win-flash {
-  0%   { opacity: 0; }
-  33%  { opacity: 1; }
-  66%  { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-.splash-card-titlebar {
-  width: 100%;
-  height: 22px;
-  background: linear-gradient(to right, var(--title-start), var(--title-end));
-  display: flex; align-items: center;
-  padding: 0 6px; gap: 6px;
-  color: white; font-size: 11px; font-weight: bold;
-  flex-shrink: 0;
-  position: relative; overflow: hidden;
-}
-.splash-card-titlebar::after {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-  background: var(--nx-lime);
-}
-.splash-card-titlebar .tb-btn { background: var(--nx-grey); }
-
-.splash-card-body {
-  padding: 24px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  background: var(--nx-black);
-  width: 100%;
-}
-
-.splash-big-logo {
-  width: 100px; height: 100px;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-.splash-big-logo svg {
-  width: 100px; height: 100px;
-  /* slow rotate to sell the "morphing" feel */
-  animation: logo-spin 8s linear infinite;
-}
-@keyframes logo-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* Pulsing ring around logo */
-.splash-big-logo::before {
-  content: '';
-  position: absolute; inset: -8px;
-  border: 2px solid var(--nx-lime);
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: ring-pulse 1.2s ease-in-out infinite alternate;
-}
-@keyframes ring-pulse {
-  from { opacity: 0.15; transform: scale(0.95); }
-  to   { opacity: 0.5;  transform: scale(1.05); }
-}
-
-.splash-brand-name {
-  font-size: 22px; font-weight: bold;
-  color: var(--nx-white);
-  letter-spacing: 1px;
-  text-align: center;
-  line-height: 1;
-}
-.splash-brand-name span { color: var(--nx-lime); }
-
-.splash-tagline {
-  font-size: 9px; color: var(--nx-purple2);
-  letter-spacing: 3px; text-transform: uppercase;
-  font-weight: bold; text-align: center;
-}
-
-.splash-card-footer {
-  width: 100%;
-  padding: 6px 10px;
-  background: var(--nx-panel);
-  border-top: 2px solid var(--nx-lime);
-  font-size: 9px; color: #888;
-  font-family: 'Courier New', monospace;
-  display: flex; justify-content: space-between;
-}
-.splash-card-footer span { color: var(--nx-purple); font-weight: bold; }
-
-/* ── BANANA WINDOW ── */
-#stickman-window { top: 50px; left: 720px; width: 300px; }
+/* ── GIF WINDOW ── */
+#stickman-window { top: 40px; left: 710px; width: 300px; }
 #banana-wrap {
-  background: var(--nx-black);
-  width: 100%;
-  height: 260px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #111;
+  width: 100%; height: 260px;
+  display: flex; align-items: center; justify-content: center;
   overflow: hidden;
 }
 #banana-gif {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 100%; max-height: 100%;
   object-fit: contain;
-  image-rendering: pixelated;
 }
 
-/* ── DOOM SCREENSAVER WINDOW ── */
-#doom-window { top: 50px; left: 1040px; width: 300px; }
+/* ── PIPES WINDOW ── */
+#doom-window { top: 40px; left: 1040px; width: 300px; }
 #doom-canvas {
   width: 100%; height: 260px;
   display: block;
   background: #000;
   cursor: none;
-  image-rendering: pixelated;
 }
 
+/* Shared window footer bar */
 .win-footer {
-  padding: 5px 8px;
-  background: var(--nx-panel);
-  font-size: 10px; color: #555;
-  border-top: 2px solid var(--nx-lime);
+  padding: 5px 10px;
+  background: linear-gradient(to bottom, #e8e8e8, #dcdcdc);
+  border-top: 1px solid #bbb;
+  font-size: 10px; color: #666;
   display: flex; align-items: center; gap: 5px;
 }
 
-/* ══════════════════════════════════════
-   MOBILE — vertical stacked layout
-   ══════════════════════════════════════ */
+/* ── SPLASH SCREEN ── */
+#splash {
+  position: fixed; inset: 0;
+  background: linear-gradient(160deg, #1c6ea4 0%, #4a9fd4 100%);
+  z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  animation: splash-bg-out 0.2s ease-in 2.0s forwards;
+}
+@keyframes splash-bg-out { to { opacity: 0; pointer-events: none; } }
+
+/* About box style splash */
+#splash-card {
+  width: 340px;
+  background: var(--osx-panel);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.4);
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.2),
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 0 0.5px rgba(255,255,255,0.2) inset;
+  overflow: hidden;
+  animation: card-drop 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0s both;
+}
+@keyframes card-drop {
+  from { transform: scale(0.85) translateY(-20px); opacity: 0; }
+  to   { transform: scale(1)    translateY(0);     opacity: 1; }
+}
+
+.splash-titlebar {
+  height: 22px;
+  background: linear-gradient(to bottom, #e0e0e0 0%, #c8c8c8 40%, #b8b8b8 60%, #d0d0d0 100%);
+  border-bottom: 1px solid #999;
+  display: flex; align-items: center;
+  padding: 0 8px; gap: 6px;
+  position: relative;
+}
+.splash-titlebar::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 1px, rgba(255,255,255,0.18) 1px, rgba(255,255,255,0.18) 2px);
+  pointer-events: none;
+}
+.splash-tl { width: 12px; height: 12px; border-radius: 50%; border: 1px solid; flex-shrink: 0; }
+.splash-tl.c { background: var(--tl-close); border-color: var(--tl-close2); }
+.splash-tl.m { background: var(--tl-min);   border-color: var(--tl-min2); }
+.splash-tl.x { background: var(--tl-max);   border-color: var(--tl-max2); }
+.splash-titlebar .t { flex: 1; text-align: center; font-size: 11px; font-weight: 600; color: #333; text-shadow: 0 1px 0 rgba(255,255,255,0.8); position: relative; }
+
+.splash-body {
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  background: var(--osx-panel2);
+  border-bottom: 1px solid #ddd;
+}
+
+/* Aqua gel app icon */
+.splash-icon {
+  width: 80px; height: 80px;
+  flex-shrink: 0;
+  position: relative;
+}
+.splash-icon svg { width: 80px; height: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); }
+
+.splash-text h1 {
+  font-size: 18px; font-weight: 700;
+  color: var(--osx-text);
+  margin-bottom: 2px;
+  letter-spacing: -0.3px;
+}
+.splash-text .ver {
+  font-size: 11px; color: #888;
+  margin-bottom: 8px;
+}
+.splash-text p { font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 4px; }
+.splash-serial {
+  font-size: 10px; color: #aaa;
+  font-family: 'Courier New', monospace;
+  margin-top: 6px;
+}
+
+.splash-progress {
+  padding: 14px 24px 18px;
+  background: var(--osx-panel);
+}
+.splash-progress-label {
+  font-size: 11px; color: #666;
+  margin-bottom: 6px;
+  display: flex; justify-content: space-between;
+}
+/* Aqua progress bar */
+.splash-bar-outer {
+  height: 16px;
+  background: linear-gradient(to bottom, #c8c8c8, #e0e0e0);
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+.splash-bar-inner {
+  height: 100%;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,0.7) 0%,
+    #5bb0ff 30%,
+    #1a7be8 70%,
+    #4aa0ff 100%
+  );
+  border-radius: 8px;
+  width: 0%;
+  animation: progress-fill 1.8s ease-out 0.2s forwards;
+  position: relative;
+}
+/* Aqua sheen on progress */
+.splash-bar-inner::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 4px; right: 4px;
+  height: 6px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.1));
+  border-radius: 4px;
+}
+@keyframes progress-fill { to { width: 100%; } }
+
+/* ── MOBILE ── */
 @media (max-width: 640px) {
-
-  body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: auto;
-    min-height: 100vh;
-  }
-
-  /* Hide chrome that doesn't make sense on mobile */
-  #ps-tools,
-  #toolbars { display: none; }
-
-  #titlebar { height: 28px; }
-  #titlebar .tb-title { font-size: 10px; }
-
-  #workspace {
-    flex-direction: column;
-    overflow: visible;
-    height: auto;
-  }
-
+  body { overflow-y: auto; overflow-x: hidden; height: auto; min-height: 100vh; }
+  #ps-tools, #osx-toolbar { display: none; }
   #canvas-area {
-    overflow: visible;
-    height: auto;
-    min-height: 100vh;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    overflow: visible; height: auto; min-height: 100vh;
+    padding: 8px; display: flex; flex-direction: column; gap: 10px;
   }
-
-  /* All windows become static stacked blocks */
-  .nx-window {
+  .osx-window {
     position: static !important;
     width: 100% !important;
     max-width: 100% !important;
-    box-shadow: 3px 3px 0 rgba(0,0,0,0.5), 3px 3px 0 1px var(--nx-purple);
   }
-
-  /* Disable drag cursor on mobile — can't drag static elements */
-  .nx-titlebar { cursor: default; }
-
-  /* Make canvases fill window width */
-  #doom-canvas {
-    height: 200px;
-  }
-
-  /* Shrink photo */
-  .photo-inset { aspect-ratio: 1; max-height: 260px; }
-
-  /* Status bar wraps */
-  #statusbar {
-    flex-wrap: wrap;
-    height: auto;
-    padding: 4px 6px;
-    gap: 4px;
-  }
-
-  /* Splash card fits screen */
-  #splash-card { width: 92vw; }
-  .splash-brand-name { font-size: 16px; }
+  .osx-titlebar { cursor: default; }
+  #doom-canvas { height: 180px; }
+  .photo-inset { max-height: 260px; }
+  #statusbar { flex-wrap: wrap; height: auto; padding: 4px 8px; gap: 4px; }
+  #splash-card { width: 90vw; }
+  .splash-body { flex-direction: column; align-items: center; }
 }
 
+/* Click ripples — Aqua blue */
 .click-ripple {
   position: fixed;
   width: 20px; height: 20px;
-  border: 2px solid var(--nx-lime);
+  border: 2px solid rgba(74,144,217,0.8);
   border-radius: 50%;
   pointer-events: none;
   z-index: 99998;
@@ -772,271 +559,234 @@ body::after {
 </head>
 <body>
 
-<!-- SPLASH — Win98 maximise morph -->
+<!-- SPLASH -->
 <div id="splash">
   <div id="splash-card">
-
-    <div class="splash-card-titlebar">
-      <svg width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
-        <rect width="32" height="32" fill="#4400aa"/>
-        <circle cx="16" cy="16" r="11" fill="none" stroke="#aaff00" stroke-width="2" stroke-dasharray="4 2"/>
-        <polygon points="16,5 25,10 25,22 16,27 7,22 7,10" fill="none" stroke="#ccff33" stroke-width="1.5"/>
-        <circle cx="16" cy="16" r="3.5" fill="#aaff00"/>
-      </svg>
-      Animorphix Studio 98
-      <div style="margin-left:auto;display:flex;gap:2px">
-        <div class="tb-btn">_</div>
-        <div class="tb-btn">□</div>
-        <div class="tb-btn close-btn">✕</div>
+    <div class="splash-titlebar">
+      <div style="display:flex;gap:5px;z-index:1">
+        <div class="splash-tl c"></div>
+        <div class="splash-tl m"></div>
+        <div class="splash-tl x"></div>
       </div>
+      <div class="t">Animorphix Studio 98</div>
     </div>
-
-    <div class="splash-card-body">
-      <div class="splash-big-logo">
-        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="30" cy="30" r="26" fill="none" stroke="#6600cc" stroke-width="2.5" stroke-dasharray="5 3"/>
-          <polygon points="30,6 52,18 52,42 30,54 8,42 8,18" fill="none" stroke="#aaff00" stroke-width="2.5"/>
-          <path d="M30,30 L52,18 A26,26 0 0,1 52,42 Z" fill="#6600cc" opacity="0.5"/>
-          <path d="M30,30 L30,6 A26,26 0 0,1 52,18 Z" fill="#aaff00" opacity="0.4"/>
-          <circle cx="30" cy="30" r="5" fill="#aaff00"/>
-          <circle cx="30" cy="30" r="2.5" fill="#330066"/>
-          <line x1="30" y1="30" x2="52" y2="18" stroke="#aaff00" stroke-width="0.8" opacity="0.6"/>
-          <line x1="30" y1="30" x2="8"  y2="18" stroke="#aaff00" stroke-width="0.8" opacity="0.4"/>
-          <line x1="30" y1="30" x2="30" y2="6"  stroke="#ccff33" stroke-width="0.8" opacity="0.3"/>
+    <div class="splash-body">
+      <!-- Aqua gel icon -->
+      <div class="splash-icon">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="gel-bg" cx="45%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#88ccff"/>
+              <stop offset="60%" stop-color="#1a7be8"/>
+              <stop offset="100%" stop-color="#0a4499"/>
+            </radialGradient>
+            <radialGradient id="gel-sheen" cx="50%" cy="20%" r="50%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.9)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+          </defs>
+          <rect x="4" y="4" width="72" height="72" rx="16" fill="url(#gel-bg)"/>
+          <!-- Morph shapes on icon -->
+          <circle cx="40" cy="40" r="22" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-dasharray="5 3"/>
+          <polygon points="40,20 56,30 56,50 40,60 24,50 24,30" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
+          <circle cx="40" cy="40" r="6" fill="white" opacity="0.9"/>
+          <circle cx="40" cy="40" r="2.5" fill="#1a7be8"/>
+          <!-- Aqua sheen -->
+          <ellipse cx="40" cy="20" rx="28" ry="14" fill="url(#gel-sheen)" opacity="0.7"/>
         </svg>
       </div>
-      <div class="splash-brand-name">Animo<span>rphix</span></div>
-      <div class="splash-tagline">Shape Your World · Since 1997</div>
+      <div class="splash-text">
+        <h1>Animorphix</h1>
+        <div class="ver">Studio 98 Professional Edition</div>
+        <p>Loading <strong>guyphenix.amx</strong>…<br>Please wait while initialising.</p>
+        <div class="serial">AMX-S98-PRO · SN: 1998-GPHX-0042<br>Licensed to: Guy Phenix</div>
+      </div>
     </div>
-
-    <div class="splash-card-footer">
-      <span>STUDIO 98 PRO</span>
-      <span style="color:#888">AMX-S98 · SN: 1998-GPHX-0042</span>
+    <div class="splash-progress">
+      <div class="splash-progress-label">
+        <span id="loading-text">Initialising kernel extensions…</span>
+        <span id="loading-pct">0%</span>
+      </div>
+      <div class="splash-bar-outer"><div class="splash-bar-inner"></div></div>
     </div>
-
   </div>
 </div>
 
 <!-- APP FRAME -->
 <div id="app-frame">
 
-  <!-- TITLE BAR -->
-  <div id="titlebar">
-    <svg class="tb-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-      <rect width="32" height="32" fill="#4400aa"/>
-      <circle cx="16" cy="16" r="11" fill="none" stroke="#aaff00" stroke-width="2" stroke-dasharray="4 2"/>
-      <polygon points="16,5 25,10 25,22 16,27 7,22 7,10" fill="none" stroke="#ccff33" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="3.5" fill="#aaff00"/>
-    </svg>
-    <div class="tb-title"><span>Animorphix</span> Studio 98 — [guyphenix.amx]</div>
-    <div class="tb-btn">_</div>
-    <div class="tb-btn">□</div>
-    <div class="tb-btn close-btn">✕</div>
-  </div>
-
-  <!-- MENU BAR -->
-  <div id="menubar">
-    <span class="menu-item">File</span>
-    <span class="menu-item">Edit</span>
-    <span class="menu-item">View</span>
-    <span class="menu-item">Insert</span>
-    <span class="menu-item">Format</span>
-    <span class="menu-item">Site</span>
-    <span class="menu-item">Window</span>
-    <span class="menu-item">Help</span>
-  </div>
-
-  <!-- TOOLBARS -->
-  <div id="toolbars">
-    <div class="toolbar">
-      <button class="t-btn" title="New">📄</button>
-      <button class="t-btn" title="Open">📂</button>
-      <button class="t-btn" title="Save">💾</button>
-      <div class="toolbar-sep"></div>
-      <button class="t-btn" title="Cut">✂</button>
-      <button class="t-btn" title="Copy">⎘</button>
-      <button class="t-btn" title="Paste">📋</button>
-      <div class="toolbar-sep"></div>
-      <button class="t-btn" title="Undo">↩</button>
-      <button class="t-btn" title="Redo">↪</button>
-      <div class="toolbar-sep"></div>
-      <span class="t-label">Zoom:</span>
-      <input class="t-input" value="100%" readonly style="width:48px">
-      <div class="toolbar-sep"></div>
-      <span class="t-label">Site:</span>
-      <input class="t-input" value="guyphenix.amx" readonly style="width:100px">
-      <div class="toolbar-sep"></div>
-      <button class="nx-action-btn">▶ PUBLISH</button>
-      <button class="nx-action-btn" style="background:#aaff00;color:#330066;border-color:#ccff33 #558800 #558800 #ccff33;margin-left:3px">⚡ PREVIEW</button>
+  <!-- MAC OS X MENU BAR -->
+  <div id="osx-menubar">
+    <span class="osx-apple">🍎</span>
+    <span class="osx-menu-item app-name">Animorphix</span>
+    <span class="osx-menu-item">File</span>
+    <span class="osx-menu-item">Edit</span>
+    <span class="osx-menu-item">View</span>
+    <span class="osx-menu-item">Insert</span>
+    <span class="osx-menu-item">Format</span>
+    <span class="osx-menu-item">Site</span>
+    <span class="osx-menu-item">Window</span>
+    <span class="osx-menu-item">Help</span>
+    <div class="osx-menubar-right">
+      <span>📶</span>
+      <span>🔋</span>
+      <span>🔊</span>
+      <span id="osx-clock">12:00</span>
     </div>
   </div>
 
-  <!-- WORKSPACE -->
-  <div id="workspace">
+  <!-- CANVAS / DESKTOP -->
+  <div id="canvas-area">
 
-    <!-- LEFT TOOLS -->
-    <div id="ps-tools">
-      <div class="ps-tool active" title="Select">↖</div>
-      <div class="ps-tool" title="Move">✦</div>
-      <div class="ps-tool" title="Crop">⊡</div>
-      <div class="ps-tool-sep"></div>
-      <div class="ps-tool" title="Text">T</div>
-      <div class="ps-tool" title="Image">🖼</div>
-      <div class="ps-tool" title="Link">🔗</div>
-      <div class="ps-tool" title="Table">⊞</div>
-      <div class="ps-tool-sep"></div>
-      <div class="ps-tool" title="Zoom">🔍</div>
-      <div class="ps-tool" title="Code">&lt;/&gt;</div>
-      <div class="ps-tool-sep"></div>
-      <div class="ps-colors">
-        <div class="ps-bg-color"></div>
-        <div class="ps-fg-color"></div>
+    <!-- PHOTO WINDOW -->
+    <div class="osx-window" id="photo-window">
+      <div class="osx-titlebar" id="photo-drag-handle">
+        <div class="osx-traffic-lights">
+          <div class="osx-tl osx-tl-close fw-close" data-window="photo-window" title="Close">✕</div>
+          <div class="osx-tl osx-tl-min" title="Minimise">−</div>
+          <div class="osx-tl osx-tl-max" title="Maximise">+</div>
+        </div>
+        <div class="osx-win-title">guyphenix_portrait.jpg</div>
+      </div>
+      <div class="photo-inset">
+        <img src="https://guyphenix.com/img/guy.jpg"
+             alt="Guy Phenix"
+             id="profile-img"
+             onerror="this.onerror=null;this.src='https://media.licdn.com/dms/image/v2/C4D03AQHEt7zJpLoNaQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1647874543937?e=2147483647&v=beta&t=OcGG6cnb-zLINwHvYme7THiEg0tknesZe5bi5ovBrE8'">
+      </div>
+      <div class="photo-info-strip">
+        <span class="pi-item">Mode: <span>RGB</span></span>
+        <span class="pi-item">400×400 <span>px</span></span>
+        <span class="pi-item">Quality: <span>High</span></span>
+      </div>
+      <div class="photo-controls">
+        <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+        <input type="range" class="zoom-slider" id="zoom-slider" min="50" max="200" value="100" oninput="setZoom(this.value)">
+        <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+        <span class="zoom-label" id="zoom-label">100%</span>
       </div>
     </div>
 
-    <!-- CANVAS -->
-    <div id="canvas-area">
-
-      <!-- PHOTO WINDOW -->
-      <div class="nx-window" id="photo-window">
-        <div class="nx-titlebar" id="photo-drag-handle">
-          <span class="win-icon">🖼</span>
-          <span class="win-title">guyphenix_portrait.jpg @ 100%</span>
-          <div class="nx-win-btn">_</div>
-          <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="photo-window">✕</div>
+    <!-- ABOUT WINDOW -->
+    <div class="osx-window" id="about-window">
+      <div class="osx-titlebar fw-drag-handle" data-window="about-window">
+        <div class="osx-traffic-lights">
+          <div class="osx-tl osx-tl-close fw-close" data-window="about-window">✕</div>
+          <div class="osx-tl osx-tl-min">−</div>
+          <div class="osx-tl osx-tl-max">+</div>
         </div>
-        <div style="padding:8px;">
-          <div class="photo-inset">
-            <img src="https://guyphenix.com/img/guy.jpg"
-                 alt="Guy Phenix"
-                 id="profile-img"
-                 onerror="this.onerror=null;this.src='https://media.licdn.com/dms/image/v2/C4D03AQHEt7zJpLoNaQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1647874543937?e=2147483647&v=beta&t=OcGG6cnb-zLINwHvYme7THiEg0tknesZe5bi5ovBrE8'">
-          </div>
-          <div class="photo-info-strip">
-            <span class="pi-item">Mode: <span>RGB</span></span>
-            <span class="pi-item">400×400 <span>px</span></span>
-            <span class="pi-item">Quality: <span>High</span></span>
-          </div>
-          <div class="photo-controls">
-            <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
-            <input type="range" class="zoom-slider" id="zoom-slider" min="50" max="200" value="100" oninput="setZoom(this.value)">
-            <button class="zoom-btn" onclick="changeZoom(10)">+</button>
-            <span class="zoom-label" id="zoom-label">100%</span>
-          </div>
-        </div>
+        <div class="osx-win-title">about.htm</div>
       </div>
-
-      <!-- ABOUT WINDOW -->
-      <div class="nx-window" id="about-window">
-        <div class="nx-titlebar fw-drag-handle" data-window="about-window">
-          <span class="win-icon">📄</span>
-          <span class="win-title">about.htm — Animorphix Studio 98</span>
-          <div class="nx-win-btn">_</div>
-          <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="about-window">✕</div>
+      <div class="osx-win-body">
+        <div class="about-content">
+          <h2>Guy Phenix</h2>
+          <p>I'm a commissioning executive for Animation 0–6 at the BBC. Based in Belfast but work with indies worldwide.</p>
+          <p>
+            <a href="https://www.bbc.co.uk/commissioning/childrens/how-we-work/#workingwithbbcchildrens" target="_blank">Working with us at CBeebies ↗</a>
+          </p>
+          <p>
+            <a href="https://www.bbc.co.uk/commissioning/childrens/0-6/" target="_blank">Development priorities ↗</a>
+          </p>
         </div>
-       <div class="nx-win-body">
-  <div class="about-content">
-    <h2>Guy Phenix</h2>
-    <p>I'm a commissioning executive for Animation 0–6 at the BBC. Based in Belfast but work with indies worldwide.</p>
-    <div class="about-links">
-      <a href="https://www.bbc.co.uk/commissioning/childrens/how-we-work/#workingwithbbcchildrens" target="_blank" class="win98-btn">
-        Working with CBeebies
-      </a>
-      <a href="https://www.bbc.co.uk/commissioning/childrens/0-6/" target="_blank" class="win98-btn">
-        Development Priorities
-      </a>
+        <div class="about-footer">© 2003 Guy Phenix · Built with Animorphix Studio 98</div>
+      </div>
     </div>
-    <p class="about-footer">© 2003 Guy Phenix · Built with Animorphix Studio 98</p>
-  </div>
-</div>
 
-      <!-- LINKS WINDOW -->
-      <div class="nx-window" id="links-window">
-        <div class="nx-titlebar fw-drag-handle" data-window="links-window">
-          <span class="win-icon">🔗</span>
-          <span class="win-title">links.htm — Animorphix Studio 98</span>
-          <div class="nx-win-btn">_</div>
-          <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="links-window">✕</div>
+    <!-- LINKS WINDOW -->
+    <div class="osx-window" id="links-window">
+      <div class="osx-titlebar fw-drag-handle" data-window="links-window">
+        <div class="osx-traffic-lights">
+          <div class="osx-tl osx-tl-close fw-close" data-window="links-window">✕</div>
+          <div class="osx-tl osx-tl-min">−</div>
+          <div class="osx-tl osx-tl-max">+</div>
         </div>
-        <div class="nx-win-body">
-          <div class="li-content">
-            <a class="li-link-btn" href="https://linkedin.com/in/guyphenix" target="_blank">
-              <div class="li-icon">in</div>
-              <div>
-                <div class="li-text">LinkedIn Profile</div>
-                <div class="li-sub">linkedin.com/in/guyphenix</div>
-              </div>
-              <span style="margin-left:auto;font-size:10px;opacity:0.5">→</span>
-            </a>
-            <div class="li-note">Click to open in your default browser. This action will take you outside Animorphix Studio 98.</div>
-          </div>
-        </div>
+        <div class="osx-win-title">links.htm</div>
       </div>
-
-      <!-- BANANA WINDOW -->
-      <div class="nx-window" id="stickman-window">
-        <div class="nx-titlebar fw-drag-handle" data-window="stickman-window">
-          <span class="win-icon">🍌</span>
-          <span class="win-title">The Gif that keeps on Giffing.gif</span>
-          <div class="nx-win-btn">_</div>
-          <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="stickman-window">✕</div>
+      <div class="osx-win-body">
+        <div class="li-content">
+          <a class="li-link-btn" href="https://linkedin.com/in/guyphenix" target="_blank">
+            <div class="li-icon">in</div>
+            <div>
+              <div class="li-text">LinkedIn Profile</div>
+              <div class="li-sub">linkedin.com/in/guyphenix</div>
+            </div>
+            <span style="margin-left:auto;font-size:12px;color:#aaa">›</span>
+          </a>
         </div>
-        <div id="banana-wrap">
-          <img id="banana-gif" alt="loading gif...">
-        </div>
-        <div class="win-footer" id="gif-footer">🎞 loading...</div>
+        <div class="li-note">Opens in your default browser.</div>
       </div>
+    </div>
 
-      <!-- PIPES SCREENSAVER WINDOW -->
-      <div class="nx-window" id="doom-window">
-        <div class="nx-titlebar fw-drag-handle" data-window="doom-window">
-          <span class="win-icon">🟧</span>
-          <span class="win-title">pipes.scr</span>
-          <div class="nx-win-btn">_</div>
-          <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="doom-window">✕</div>
+    <!-- GIF WINDOW -->
+    <div class="osx-window" id="stickman-window">
+      <div class="osx-titlebar fw-drag-handle" data-window="stickman-window">
+        <div class="osx-traffic-lights">
+          <div class="osx-tl osx-tl-close fw-close" data-window="stickman-window">✕</div>
+          <div class="osx-tl osx-tl-min">−</div>
+          <div class="osx-tl osx-tl-max">+</div>
         </div>
-        <canvas id="doom-canvas"></canvas>
-        <div class="win-footer" style="font-family:'Courier New',monospace">Windows 3D Pipes · Press any key to exit</div>
+        <div class="osx-win-title">The Gif that keeps on Giffing.gif</div>
       </div>
+      <div id="banana-wrap">
+        <img id="banana-gif" alt="loading gif…">
+      </div>
+      <div class="win-footer" id="gif-footer">🎞 loading…</div>
+    </div>
 
-    </div><!-- /canvas-area -->
+    <!-- PIPES SCREENSAVER WINDOW -->
+    <div class="osx-window" id="doom-window">
+      <div class="osx-titlebar fw-drag-handle" data-window="doom-window">
+        <div class="osx-traffic-lights">
+          <div class="osx-tl osx-tl-close fw-close" data-window="doom-window">✕</div>
+          <div class="osx-tl osx-tl-min">−</div>
+          <div class="osx-tl osx-tl-max">+</div>
+        </div>
+        <div class="osx-win-title">pipes.scr</div>
+      </div>
+      <canvas id="doom-canvas"></canvas>
+      <div class="win-footer" style="font-family:'Courier New',monospace">Windows 3D Pipes · Press any key to exit</div>
+    </div>
 
-  </div><!-- /workspace -->
+  </div><!-- /canvas-area -->
 
   <!-- STATUS BAR -->
   <div id="statusbar">
     <div class="sb-panel" id="sb-coords">X: 0  Y: 0</div>
     <div class="sb-panel">guyphenix.amx</div>
-    <div class="sb-panel nx-brand">ANIMORPHIX</div>
+    <div class="sb-panel osx-brand">ANIMORPHIX</div>
     <div class="sb-panel" style="margin-left:auto">Studio 98 Pro</div>
   </div>
 
 </div><!-- /app-frame -->
 
 <script>
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('osx-clock').textContent = `${h}:${m}`;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
 // ── DETECT MOBILE ──
 const isMobile = () => window.innerWidth <= 640;
 
 // ── POSITION WINDOWS ──
 function positionWindows() {
-  if (isMobile()) return; // mobile uses static CSS stacking
-  document.getElementById('photo-window').style.cssText    += ';top:50px;left:70px;';
-  document.getElementById('about-window').style.cssText    += ';top:50px;left:400px;width:290px;';
-  document.getElementById('links-window').style.cssText    += ';top:310px;left:400px;width:290px;';
-  document.getElementById('stickman-window').style.cssText += ';top:50px;left:720px;width:300px;';
-  document.getElementById('doom-window').style.cssText     += ';top:50px;left:1040px;width:300px;';
+  if (isMobile()) return;
+  document.getElementById('photo-window').style.cssText    += ';top:40px;left:60px;width:300px;';
+  document.getElementById('about-window').style.cssText    += ';top:40px;left:390px;width:290px;';
+  document.getElementById('links-window').style.cssText    += ';top:310px;left:390px;width:290px;';
+  document.getElementById('stickman-window').style.cssText += ';top:40px;left:710px;width:300px;';
+  document.getElementById('doom-window').style.cssText     += ';top:40px;left:1040px;width:300px;';
 }
 positionWindows();
 
-// ── DRAG WINDOWS (mouse + touch) ──
+// ── DRAG (mouse + touch) ──
 function makeDraggable(el, handle) {
   let ox = 0, oy = 0, mx = 0, my = 0;
-
   function startDrag(cx, cy) {
     mx = cx; my = cy;
     document.addEventListener('mousemove', onMouseMove);
@@ -1045,8 +795,7 @@ function makeDraggable(el, handle) {
     document.addEventListener('touchend',  onTouchEnd);
   }
   function doDrag(cx, cy) {
-    ox = mx - cx; oy = my - cy;
-    mx = cx; my = cy;
+    ox = mx - cx; oy = my - cy; mx = cx; my = cy;
     el.style.top  = (el.offsetTop  - oy) + 'px';
     el.style.left = (el.offsetLeft - ox) + 'px';
   }
@@ -1062,41 +811,49 @@ function makeDraggable(el, handle) {
   function onTouchEnd()   { stopDrag(); }
 
   handle.addEventListener('mousedown', e => {
-    if (e.target.classList.contains('nx-win-btn')) return;
+    if (e.target.classList.contains('osx-tl')) return;
     e.preventDefault();
+    bringToFront(el);
     startDrag(e.clientX, e.clientY);
   });
   handle.addEventListener('touchstart', e => {
-    if (e.target.classList.contains('nx-win-btn')) return;
-    if (isMobile()) return; // no drag on mobile — windows are static
+    if (e.target.classList.contains('osx-tl')) return;
+    if (isMobile()) return;
+    bringToFront(el);
     startDrag(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 }
 
 makeDraggable(document.getElementById('photo-window'), document.getElementById('photo-drag-handle'));
-document.querySelectorAll('.fw-drag-handle').forEach(handle => {
-  makeDraggable(handle.closest('.nx-window'), handle);
-});
+document.querySelectorAll('.fw-drag-handle').forEach(h => makeDraggable(h.closest('.osx-window'), h));
 
-// ── CLOSE BUTTONS ──
+// ── CLOSE ──
 document.querySelectorAll('.fw-close').forEach(btn => {
   btn.addEventListener('click', e => {
     e.stopPropagation();
-    const winId = btn.dataset.window;
-    if (winId) document.getElementById(winId).style.display = 'none';
+    const w = btn.dataset.window;
+    if (w) document.getElementById(w).style.display = 'none';
   });
 });
 
-// ── BRING TO FRONT ──
-const allWins = ['photo-window', 'about-window', 'links-window', 'stickman-window', 'doom-window'];
+// ── BRING TO FRONT + ACTIVE STATE ──
 let zTop = 101;
+const allWins = ['photo-window','about-window','links-window','stickman-window','doom-window'];
+
+function bringToFront(el) {
+  allWins.forEach(id => document.getElementById(id)?.classList.add('inactive'));
+  el.classList.remove('inactive');
+  el.style.zIndex = ++zTop;
+}
+
 allWins.forEach(id => {
   const el = document.getElementById(id);
   if (!el) return;
-  el.addEventListener('mousedown', function() {
-    this.style.zIndex = ++zTop;
-  });
+  el.classList.add('inactive');
+  el.addEventListener('mousedown', function() { bringToFront(this); });
 });
+// Photo starts active
+document.getElementById('photo-window').classList.remove('inactive');
 
 // ── ZOOM ──
 let zoom = 100;
@@ -1108,17 +865,30 @@ function setZoom(v) {
   img.style.transform = `scale(${zoom/100})`;
   img.style.transformOrigin = 'top center';
 }
-function changeZoom(delta) {
-  setZoom(Math.min(200, Math.max(50, zoom + delta)));
-}
+function changeZoom(delta) { setZoom(Math.min(200, Math.max(50, zoom + delta))); }
 
-// ── RANDOM GIF PICKER ──
+// ── CBEEBIES HQ RANDOM GIF ──
 (function() {
+  // All confirmed CBeebies HQ Giphy IDs
   const gifs = [
-    ['NsKz9DrPlLP40Sxjs0', '🍌 cool banana'],
-    ['l3vR4p2l96Fz9G3wk',     '🐶 excited doggo'],
-    ['xUPGGLbXdHln3ZAkla',      '🐱 surprised cat'],
-    ['xUOrwmpSiOuVGPG3JK',     '🦆 dancing duck'],
+    ['SiM1SgsQzQ8qsFrFEE', '🐶 Hey Duggee!'],
+    ['5wFGyL5cgvQoF57DHo', '🎉 Happy Birthday Dancing'],
+    ['1jZuO5lhABRtIlKZ3z', '😮 My Baby No'],
+    ['kEWMQH6mPfp7xgScqo', '✨ CBeebies Magic'],
+    ['7Jk79EQznTFpBcyeIB', '🐣 Easter Chick'],
+    ['65S4BuWyk9h6tCdhHX', '☀️ Good Morning Sun'],
+    ['dmZ8yofeAgeGU5dkLq', '☁️ CBeebies House'],
+    ['5niASUCGOHUrULIU5M', '🪁 Kite Flying'],
+    ['25PkdXYzOj4cmRshNH', '🍰 Hey Duggee Bake Off'],
+    ['LmaHvnhxEqXmQPnwO6', '🐕 Happy Dodge'],
+    ['1xpDEk9birm8jCZv1p', '🌙 Moon Bounce'],
+    ['f8h94DnWW39UOuiXD7', '🎊 CBeebies Evie'],
+    ['gLdR8RoGBrJfbGYMDh', '👋 Molly and Mack Wave'],
+    ['fxzF8qYlTCBOiZgVtH', '😂 Laugh Out Loud'],
+    ['p3drKZUSH6Gs65vxM3', '💃 Well Done Dancing'],
+    ['7J7lzuNFHfvqUd52hF', '🕺 Dance Dancing'],
+    ['xWpT60N73Khk1TqiuM', '🎡 Carnival Feathers'],
+    ['5jUFLxB5AGsNWOclsH', '🥔 Small Potatoes'],
   ];
 
   const idx    = Math.floor(Math.random() * gifs.length);
@@ -1128,16 +898,33 @@ function changeZoom(delta) {
 
   img.src = `https://media.giphy.com/media/${pick[0]}/giphy.gif`;
   img.alt = pick[1];
-
   img.onerror = function() {
     const next = gifs[(idx + 1) % gifs.length];
     this.onerror = null;
     this.src = `https://media.giphy.com/media/${next[0]}/giphy.gif`;
-    footer.textContent = `🎞 ${next[1]} · refreshes each visit`;
+    footer.textContent = `🎞 ${next[1]} · from @CBeebiesHQ`;
   };
-
-  footer.textContent = `🎞 ${pick[1]} · refreshes each visit`;
+  footer.textContent = `🎞 ${pick[1]} · from @CBeebiesHQ`;
 })();
+
+// ── SPLASH MESSAGES ──
+const msgs = [
+  'Initialising kernel extensions…',
+  'Loading system preferences…',
+  'Mounting guyphenix.amx…',
+  'Checking disk permissions…',
+  'Rendering Aqua interface…',
+  'Ready.',
+];
+let mi = 0;
+const lt = document.getElementById('loading-text');
+const lp = document.getElementById('loading-pct');
+const msgInterval = setInterval(() => {
+  mi++;
+  if (mi >= msgs.length) { clearInterval(msgInterval); return; }
+  lt.textContent = msgs[mi];
+  lp.textContent = Math.round((mi / (msgs.length - 1)) * 100) + '%';
+}, 320);
 
 // ── CURSOR COORDS ──
 document.addEventListener('mousemove', e => {
@@ -1158,240 +945,100 @@ document.addEventListener('click', e => {
 (function() {
   const canvas = document.getElementById('doom-canvas');
   const ctx    = canvas.getContext('2d');
-
   function resize() {
     canvas.width  = canvas.offsetWidth  || 300;
     canvas.height = canvas.offsetHeight || 260;
-    // Repaint background on resize
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
   resize();
-
-  const GRID = 20; // cell size in px
+  const GRID = 20;
   const cols = () => Math.floor(canvas.width  / GRID);
   const rows = () => Math.floor(canvas.height / GRID);
-
-  // Classic Win95 pipe colours — bright primary set
-  const PIPE_COLOURS = [
-    '#ff0000', '#0000ff', '#00aa00', '#ffaa00',
-    '#aa00aa', '#00aaaa', '#ff6600', '#aaff00',
-    '#ff00ff', '#ffffff', '#ffff00', '#00ffff',
-  ];
-
-  // Ball joint colours (slightly lighter)
-  const JOINT_COLOURS = [
-    '#ff6666', '#6666ff', '#44cc44', '#ffcc66',
-    '#cc66cc', '#44cccc', '#ff9944', '#ccff44',
-    '#ff66ff', '#cccccc', '#ffff88', '#88ffff',
-  ];
-
-  // Direction vectors
-  const DIRS = [
-    { dx:  1, dy:  0, name: 'R' },
-    { dx: -1, dy:  0, name: 'L' },
-    { dx:  0, dy:  1, name: 'D' },
-    { dx:  0, dy: -1, name: 'U' },
-  ];
-
-  // Pipe half-width
-  const PW = 6;
-  // Ball joint radius
-  const BR = 5;
-
-  let pipes      = [];
-  let occupied   = null; // 2d array tracking used cells
-  let resetTimer = 0;
+  const PIPE_COLOURS  = ['#ff5f57','#febc2e','#28c840','#4a90d9','#af52de','#ff9500','#00c7be','#ff375f'];
+  const JOINT_COLOURS = ['#ff8884','#ffd060','#50e070','#70b8f0','#d080ff','#ffb840','#40e8e0','#ff6080'];
+  const DIRS = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
+  const PW = 6, BR = 5;
+  let pipes = [], occupied = null, resetTimer = 0;
 
   function initGrid() {
     occupied = Array.from({ length: rows() }, () => new Array(cols()).fill(false));
-    pipes    = [];
+    pipes = [];
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     spawnPipe();
   }
-
   function spawnPipe() {
-    const colIdx = Math.floor(Math.random() * PIPE_COLOURS.length);
-    // Pick a random unoccupied starting cell
+    const ci = Math.floor(Math.random() * PIPE_COLOURS.length);
     let attempts = 0, sx, sy;
-    do {
-      sx = Math.floor(Math.random() * cols());
-      sy = Math.floor(Math.random() * rows());
-      attempts++;
-    } while (occupied[sy]?.[sx] && attempts < 50);
-
-    pipes.push({
-      x: sx, y: sy,
-      dir: DIRS[Math.floor(Math.random() * 4)],
-      colour: PIPE_COLOURS[colIdx],
-      jointColour: JOINT_COLOURS[colIdx],
-      stuckFor: 0,
-      dead: false,
-    });
+    do { sx = Math.floor(Math.random() * cols()); sy = Math.floor(Math.random() * rows()); attempts++; }
+    while (occupied[sy]?.[sx] && attempts < 50);
+    pipes.push({ x:sx, y:sy, dir:DIRS[Math.floor(Math.random()*4)], colour:PIPE_COLOURS[ci], jointColour:JOINT_COLOURS[ci], stuckFor:0, dead:false });
     if (occupied[sy]) occupied[sy][sx] = true;
   }
-
-  function cellToPixel(gx, gy) {
-    return {
-      px: gx * GRID + GRID / 2,
-      py: gy * GRID + GRID / 2,
-    };
-  }
-
-  function drawPipeSegment(x1, y1, x2, y2, colour) {
-    const p1 = cellToPixel(x1, y1);
-    const p2 = cellToPixel(x2, y2);
-
-    // 3D-ish pipe: dark fill + lighter highlight
-    ctx.lineCap = 'square';
-
-    // Shadow side
-    ctx.strokeStyle = shadeColour(colour, -50);
-    ctx.lineWidth = PW + 2;
-    ctx.beginPath();
-    ctx.moveTo(p1.px, p1.py);
-    ctx.lineTo(p2.px, p2.py);
-    ctx.stroke();
-
-    // Main body
-    ctx.strokeStyle = colour;
-    ctx.lineWidth = PW;
-    ctx.beginPath();
-    ctx.moveTo(p1.px, p1.py);
-    ctx.lineTo(p2.px, p2.py);
-    ctx.stroke();
-
-    // Highlight streak
-    ctx.strokeStyle = shadeColour(colour, 80);
-    ctx.lineWidth = 2;
-    // Offset highlight depending on direction
-    const isDx = x1 !== x2;
-    ctx.beginPath();
-    if (isDx) {
-      ctx.moveTo(p1.px, p1.py - PW / 2 + 1);
-      ctx.lineTo(p2.px, p2.py - PW / 2 + 1);
-    } else {
-      ctx.moveTo(p1.px - PW / 2 + 1, p1.py);
-      ctx.lineTo(p2.px - PW / 2 + 1, p2.py);
-    }
-    ctx.stroke();
-  }
-
-  function drawJoint(gx, gy, colour, jointColour) {
-    const { px, py } = cellToPixel(gx, gy);
-
-    // Shadow
-    ctx.fillStyle = shadeColour(jointColour, -60);
-    ctx.beginPath();
-    ctx.arc(px + 1, py + 1, BR, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Ball
-    const grad = ctx.createRadialGradient(px - 2, py - 2, 1, px, py, BR);
-    grad.addColorStop(0, shadeColour(jointColour, 100));
-    grad.addColorStop(0.5, jointColour);
-    grad.addColorStop(1, shadeColour(jointColour, -60));
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(px, py, BR, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  function shadeColour(hex, amount) {
-    const num = parseInt(hex.replace('#',''), 16);
-    const r = Math.min(255, Math.max(0, (num >> 16) + amount));
-    const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + amount));
-    const b = Math.min(255, Math.max(0, (num & 0xff) + amount));
+  function cellToPixel(gx, gy) { return { px: gx*GRID+GRID/2, py: gy*GRID+GRID/2 }; }
+  function shade(hex, amt) {
+    const n = parseInt(hex.replace('#',''), 16);
+    const r = Math.min(255,Math.max(0,(n>>16)+amt));
+    const g = Math.min(255,Math.max(0,((n>>8)&0xff)+amt));
+    const b = Math.min(255,Math.max(0,(n&0xff)+amt));
     return `rgb(${r},${g},${b})`;
   }
-
+  function drawSeg(x1,y1,x2,y2,col) {
+    const p1=cellToPixel(x1,y1), p2=cellToPixel(x2,y2);
+    ctx.lineCap='square';
+    ctx.strokeStyle=shade(col,-50); ctx.lineWidth=PW+2;
+    ctx.beginPath(); ctx.moveTo(p1.px,p1.py); ctx.lineTo(p2.px,p2.py); ctx.stroke();
+    ctx.strokeStyle=col; ctx.lineWidth=PW;
+    ctx.beginPath(); ctx.moveTo(p1.px,p1.py); ctx.lineTo(p2.px,p2.py); ctx.stroke();
+    ctx.strokeStyle=shade(col,80); ctx.lineWidth=2;
+    const horiz=x1!==x2;
+    ctx.beginPath();
+    if (horiz) { ctx.moveTo(p1.px,p1.py-PW/2+1); ctx.lineTo(p2.px,p2.py-PW/2+1); }
+    else       { ctx.moveTo(p1.px-PW/2+1,p1.py); ctx.lineTo(p2.px-PW/2+1,p2.py); }
+    ctx.stroke();
+  }
+  function drawJoint(gx,gy,col,jcol) {
+    const {px,py}=cellToPixel(gx,gy);
+    ctx.fillStyle=shade(jcol,-60); ctx.beginPath(); ctx.arc(px+1,py+1,BR,0,Math.PI*2); ctx.fill();
+    const g=ctx.createRadialGradient(px-2,py-2,1,px,py,BR);
+    g.addColorStop(0,shade(jcol,100)); g.addColorStop(0.5,jcol); g.addColorStop(1,shade(jcol,-60));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,BR,0,Math.PI*2); ctx.fill();
+  }
   function stepPipe(pipe) {
     if (pipe.dead) return;
-
-    // Try to continue in current direction, else turn
-    const tries = [...DIRS].sort(() => Math.random() - 0.5);
-    // Bias strongly toward current direction
-    tries.unshift(pipe.dir);
-    tries.unshift(pipe.dir);
-    tries.unshift(pipe.dir);
-
-    let moved = false;
-    let turned = false;
-    const prevDir = pipe.dir;
-
+    const tries=[...DIRS].sort(()=>Math.random()-0.5);
+    tries.unshift(pipe.dir); tries.unshift(pipe.dir); tries.unshift(pipe.dir);
+    const prevDir=pipe.dir; let moved=false;
     for (const d of tries) {
-      const nx = pipe.x + d.dx;
-      const ny = pipe.y + d.dy;
-      if (nx < 0 || nx >= cols() || ny < 0 || ny >= rows()) continue;
+      const nx=pipe.x+d.dx, ny=pipe.y+d.dy;
+      if (nx<0||nx>=cols()||ny<0||ny>=rows()) continue;
       if (occupied[ny]?.[nx]) continue;
-
-      // Draw segment from old pos to new
-      if (d !== prevDir) {
-        // Direction change — draw a joint ball at current position
-        drawJoint(pipe.x, pipe.y, pipe.colour, pipe.jointColour);
-        turned = true;
-      } else {
-        drawPipeSegment(pipe.x, pipe.y, nx, ny, pipe.colour);
-      }
-
-      occupied[ny][nx] = true;
-      pipe.x   = nx;
-      pipe.y   = ny;
-      pipe.dir = d;
-      pipe.stuckFor = 0;
-      moved = true;
-      break;
+      if (d!==prevDir) drawJoint(pipe.x,pipe.y,pipe.colour,pipe.jointColour);
+      else drawSeg(pipe.x,pipe.y,nx,ny,pipe.colour);
+      occupied[ny][nx]=true; pipe.x=nx; pipe.y=ny; pipe.dir=d; pipe.stuckFor=0; moved=true; break;
     }
-
-    if (!moved) {
-      pipe.stuckFor++;
-      if (pipe.stuckFor > 2) pipe.dead = true;
-    }
+    if (!moved) { pipe.stuckFor++; if (pipe.stuckFor>2) pipe.dead=true; }
   }
-
-  // Reset when screen gets too full or all pipes dead
   function checkReset() {
-    const total = cols() * rows();
-    const used  = occupied.reduce((sum, row) => sum + row.filter(Boolean).length, 0);
-    const allDead = pipes.every(p => p.dead);
-    if (used / total > 0.88 || (allDead && pipes.length > 0)) {
+    const total=cols()*rows();
+    const used=occupied.reduce((s,r)=>s+r.filter(Boolean).length,0);
+    const allDead=pipes.every(p=>p.dead);
+    if (used/total>0.88||(allDead&&pipes.length>0)) {
       resetTimer++;
-      if (resetTimer > 60) { // brief pause before wipe
-        resetTimer = 0;
-        // Fade to black
-        ctx.fillStyle = 'rgba(0,0,0,0.08)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        if (resetTimer === 0) initGrid();
-      }
-    } else {
-      resetTimer = 0;
-    }
+      if (resetTimer>60) { resetTimer=0; ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height); if(resetTimer===0) initGrid(); }
+    } else { resetTimer=0; }
   }
-
-  let tick = 0;
+  let tick=0;
   function loop() {
     tick++;
-
-    // Spawn new pipes periodically if there's room
-    if (tick % 80 === 0 && pipes.filter(p => !p.dead).length < 6) {
-      spawnPipe();
-    }
-
-    // Step each living pipe every few frames (slower = more satisfying)
-    if (tick % 3 === 0) {
-      pipes.forEach(pipe => {
-        if (!pipe.dead) stepPipe(pipe);
-      });
-    }
-
+    if (tick%80===0&&pipes.filter(p=>!p.dead).length<6) spawnPipe();
+    if (tick%3===0) pipes.forEach(p=>{ if(!p.dead) stepPipe(p); });
     checkReset();
     requestAnimationFrame(loop);
   }
-
-  initGrid();
-  loop();
-  window.addEventListener('resize', () => { resize(); initGrid(); });
+  initGrid(); loop();
+  window.addEventListener('resize', ()=>{ resize(); initGrid(); });
 })();
 </script>
 </body>
