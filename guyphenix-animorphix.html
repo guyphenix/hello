@@ -976,18 +976,15 @@ body::after {
       <div class="nx-window" id="stickman-window">
         <div class="nx-titlebar fw-drag-handle" data-window="stickman-window">
           <span class="win-icon">🍌</span>
-          <span class="win-title">banana.gif</span>
+          <span class="win-title">The Gif that keeps on Giffing.gif</span>
           <div class="nx-win-btn">_</div>
           <div class="nx-win-btn">□</div>
           <div class="nx-win-btn close fw-close" data-window="stickman-window">✕</div>
         </div>
         <div id="banana-wrap">
-          <img id="banana-gif"
-               src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
-               alt="cool banana"
-               onerror="this.src='https://media2.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'">
+          <img id="banana-gif" alt="loading gif...">
         </div>
-        <div class="win-footer">🍌 banana.gif · 1997 · 2.4KB</div>
+        <div class="win-footer" id="gif-footer">🎞 loading...</div>
       </div>
 
       <!-- PIPES SCREENSAVER WINDOW -->
@@ -1110,6 +1107,47 @@ function setZoom(v) {
 function changeZoom(delta) {
   setZoom(Math.min(200, Math.max(50, zoom + delta)));
 }
+
+// ── RANDOM GIF PICKER ──
+(function() {
+  const gifs = [
+    ['3oriO0OEd9QIDdllqo', '🍌 cool banana'],
+    ['11sBLVxNs7v6WA',     '🐶 excited doggo'],
+    ['ICOgUNjpvO0PC',      '🐱 surprised cat'],
+    ['13CoXDiaCcCoyk',     '🦆 dancing duck'],
+    ['lptjRBxFKCJmFoibr7', '🐸 kermit flail'],
+    ['3oEjHAUOqG3lSS0f1C', '🦄 unicorn time'],
+    ['xT9IgDEI1iZyb2wqo8', '🐧 sliding penguin'],
+    ['l0MYAs5E2oydDMRCg',  '🎉 party time'],
+    ['5GoVLqeAOo6PK',      '🐻 dancing bear'],
+    ['3oz8xRF0v7RCQA3Hig', '🌈 rainbow explosion'],
+    ['nXxOjZrbnbRxS',      '🐈 cat on keyboard'],
+    ['GeimqsH0TLDt4LLzo8', '🦖 tiny dinosaur'],
+    ['l46Cy1rHbQ92uuLXa',  '🎸 air guitar dog'],
+    ['LpkLWXTp3PWxnfsBMV', '🐼 tumbling panda'],
+    ['5p2wQe7GnkHa8',      '🎊 confetti blast'],
+    ['3ohs7HdhQA4ffttVAA', '🦋 butterfly dance'],
+    ['l0HlvtIPzPdt2usKs',  '🐠 fishy flip'],
+    ['h7WCFPGaHMbOO',      '🐘 elephant wave'],
+  ];
+
+  const idx    = Math.floor(Math.random() * gifs.length);
+  const pick   = gifs[idx];
+  const img    = document.getElementById('banana-gif');
+  const footer = document.getElementById('gif-footer');
+
+  img.src = `https://media.giphy.com/media/${pick[0]}/giphy.gif`;
+  img.alt = pick[1];
+
+  img.onerror = function() {
+    const next = gifs[(idx + 1) % gifs.length];
+    this.onerror = null;
+    this.src = `https://media.giphy.com/media/${next[0]}/giphy.gif`;
+    footer.textContent = `🎞 ${next[1]} · refreshes each visit`;
+  };
+
+  footer.textContent = `🎞 ${pick[1]} · refreshes each visit`;
+})();
 
 // ── CURSOR COORDS ──
 document.addEventListener('mousemove', e => {
