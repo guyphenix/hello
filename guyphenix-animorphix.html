@@ -651,22 +651,24 @@ body::after {
 }
 .splash-card-footer span { color: var(--nx-purple); font-weight: bold; }
 
-/* ── MAP & GLOBE WINDOWS ── */
-#map-window  { top: 50px;  left: 720px; width: 300px; }
-#globe-window { top: 50px; left: 1040px; width: 300px; }
-
-#belfast-map {
+/* ── STICKMAN WINDOW ── */
+#stickman-window { top: 50px; left: 720px; width: 300px; }
+#stickman-canvas {
   width: 100%; height: 260px;
   display: block;
+  background: var(--nx-panel);
+  cursor: crosshair;
 }
 
-#globe-canvas {
+/* ── DOOM SCREENSAVER WINDOW ── */
+#doom-window { top: 50px; left: 1040px; width: 300px; }
+#doom-canvas {
   width: 100%; height: 260px;
   display: block;
-  background: var(--nx-black);
-  cursor: grab;
+  background: #000;
+  cursor: none;
+  image-rendering: pixelated;
 }
-#globe-canvas:active { cursor: grabbing; }
 
 .win-footer {
   padding: 5px 8px;
@@ -895,30 +897,30 @@ body::after {
         </div>
       </div>
 
-      <!-- MAP WINDOW: Where I Am Based -->
-      <div class="nx-window" id="map-window">
-        <div class="nx-titlebar fw-drag-handle" data-window="map-window">
-          <span class="win-icon">📍</span>
-          <span class="win-title">Where I am based</span>
+      <!-- STICKMAN WINDOW -->
+      <div class="nx-window" id="stickman-window">
+        <div class="nx-titlebar fw-drag-handle" data-window="stickman-window">
+          <span class="win-icon">🚶</span>
+          <span class="win-title">stickman.exe</span>
           <div class="nx-win-btn">_</div>
           <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="map-window">✕</div>
+          <div class="nx-win-btn close fw-close" data-window="stickman-window">✕</div>
         </div>
-        <div id="belfast-map"></div>
-        <div class="win-footer">📍 Belfast, NI</div>
+        <canvas id="stickman-canvas"></canvas>
+        <div class="win-footer">Click anywhere to move him</div>
       </div>
 
-      <!-- GLOBE WINDOW: Who I Work With -->
-      <div class="nx-window" id="globe-window">
-        <div class="nx-titlebar fw-drag-handle" data-window="globe-window">
-          <span class="win-icon">🌍</span>
-          <span class="win-title">Who I work with</span>
+      <!-- DOOM SCREENSAVER WINDOW -->
+      <div class="nx-window" id="doom-window">
+        <div class="nx-titlebar fw-drag-handle" data-window="doom-window">
+          <span class="win-icon">💀</span>
+          <span class="win-title">doom_saver.scr</span>
           <div class="nx-win-btn">_</div>
           <div class="nx-win-btn">□</div>
-          <div class="nx-win-btn close fw-close" data-window="globe-window">✕</div>
+          <div class="nx-win-btn close fw-close" data-window="doom-window">✕</div>
         </div>
-        <canvas id="globe-canvas"></canvas>
-        <div class="win-footer">🟣 Global reach &nbsp;|&nbsp; 🟢 Home base — Belfast</div>
+        <canvas id="doom-canvas"></canvas>
+        <div class="win-footer" style="font-family:'Courier New',monospace;color:#c00">RIP AND TEAR</div>
       </div>
 
     </div><!-- /canvas-area -->
@@ -982,7 +984,7 @@ document.querySelectorAll('.fw-close').forEach(btn => {
 });
 
 // ── BRING TO FRONT ──
-const allWins = ['photo-window', 'about-window', 'links-window', 'map-window', 'globe-window'];
+const allWins = ['photo-window', 'about-window', 'links-window', 'stickman-window', 'doom-window'];
 let zTop = 101;
 allWins.forEach(id => {
   const el = document.getElementById(id);
@@ -1021,322 +1023,536 @@ document.addEventListener('click', e => {
   setTimeout(() => r.remove(), 600);
 });
 
-// ── INLINE SVG MAP: British Isles with Belfast pin ──
+// ── STICKMAN ──
 (function() {
-  const container = document.getElementById('belfast-map');
-  // Approximate SVG outlines of Great Britain, Ireland and NI
-  // Coordinates mapped to a ~300×260 viewBox centred on the British Isles
-  container.innerHTML = `
-  <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg"
-       style="width:100%;height:100%;display:block;background:#0d0d1a">
+  const canvas = document.getElementById('stickman-canvas');
+  const ctx    = canvas.getContext('2d');
 
-    <!-- Grid lines -->
-    <defs>
-      <pattern id="mgrid" width="30" height="30" patternUnits="userSpaceOnUse">
-        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(102,0,204,0.2)" stroke-width="0.5"/>
-      </pattern>
-    </defs>
-    <rect width="300" height="260" fill="url(#mgrid)"/>
-
-    <!-- Ocean tint -->
-    <rect width="300" height="260" fill="rgba(0,0,40,0.6)"/>
-
-    <!-- GREAT BRITAIN — simplified outline -->
-    <path d="
-      M 148,8
-      C 155,8 163,12 168,18
-      C 174,25 177,32 175,40
-      C 173,48 168,52 172,58
-      C 176,64 182,65 184,72
-      C 186,79 183,86 179,91
-      C 175,96 170,98 168,104
-      C 166,110 168,117 165,122
-      C 162,127 157,129 155,135
-      C 153,141 155,148 152,154
-      C 149,160 143,163 140,169
-      C 137,175 137,182 133,187
-      C 129,192 123,194 120,200
-      C 117,206 118,213 114,218
-      C 110,223 104,225 100,230
-      C 96,234 94,239 89,241
-      C 84,243 78,241 74,238
-      C 70,235 68,230 65,226
-      C 62,222 58,219 57,214
-      C 56,209 59,204 59,199
-      C 59,194 56,189 57,184
-      C 58,179 62,175 63,170
-      C 64,165 62,160 64,155
-      C 66,150 71,147 73,142
-      C 75,137 74,131 77,126
-      C 80,121 85,118 88,113
-      C 91,108 92,102 96,98
-      C 100,94 105,92 109,88
-      C 113,84 115,79 120,76
-      C 125,73 131,73 136,70
-      C 141,67 145,62 148,57
-      C 151,52 151,46 153,41
-      C 155,36 158,31 158,26
-      C 158,21 154,14 148,8 Z
-    " fill="#1a1a3a" stroke="#6600cc" stroke-width="1.2"/>
-
-    <!-- SCOTLAND bump at top -->
-    <path d="
-      M 148,8 C 144,6 139,7 136,10 C 133,13 133,18 136,21
-      C 139,24 144,24 147,21 C 150,18 151,13 148,8 Z
-    " fill="#1a1a3a" stroke="#6600cc" stroke-width="1"/>
-
-    <!-- IRELAND (whole island) -->
-    <path d="
-      M 62,90
-      C 68,86 75,84 80,88
-      C 85,92 86,99 84,106
-      C 82,113 77,118 75,125
-      C 73,132 74,140 71,147
-      C 68,154 62,158 60,165
-      C 58,172 61,180 58,186
-      C 55,192 49,195 47,201
-      C 45,207 47,214 44,219
-      C 41,224 35,226 32,222
-      C 29,218 30,212 29,207
-      C 28,202 25,197 26,192
-      C 27,187 31,183 32,178
-      C 33,173 31,168 33,163
-      C 35,158 40,155 42,150
-      C 44,145 43,139 46,134
-      C 49,129 54,126 57,121
-      C 60,116 61,110 63,105
-      C 65,100 64,94 62,90 Z
-    " fill="#1a1a3a" stroke="#6600cc" stroke-width="1.2"/>
-
-    <!-- NORTHERN IRELAND highlight -->
-    <path d="
-      M 62,90 C 66,87 71,86 76,88 C 81,90 83,95 82,100
-      C 81,105 77,108 73,109 C 69,110 65,108 63,104
-      C 61,100 60,94 62,90 Z
-    " fill="#2a0044" stroke="#9933ff" stroke-width="1" opacity="0.9"/>
-
-    <!-- Shetland (tiny blob top right) -->
-    <ellipse cx="185" cy="14" rx="5" ry="8" fill="#1a1a3a" stroke="#6600cc" stroke-width="0.8"/>
-
-    <!-- Orkney (tiny) -->
-    <ellipse cx="172" cy="22" rx="4" ry="5" fill="#1a1a3a" stroke="#6600cc" stroke-width="0.8"/>
-
-    <!-- Isle of Man -->
-    <ellipse cx="88" cy="128" rx="4" ry="6" fill="#1a1a3a" stroke="#6600cc" stroke-width="0.8"/>
-
-    <!-- BELFAST PIN — lat 54.6, lon -5.93 mapped to approx x=70, y=99 -->
-    <!-- Pulse ring -->
-    <circle cx="70" cy="99" r="10" fill="none" stroke="#aaff00" stroke-width="1" opacity="0.4">
-      <animate attributeName="r" values="6;14;6" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
-    </circle>
-    <!-- Pin dot -->
-    <circle cx="70" cy="99" r="5" fill="#aaff00" stroke="#330066" stroke-width="1.5"/>
-    <circle cx="70" cy="99" r="2" fill="#330066"/>
-
-    <!-- Label -->
-    <text x="77" y="96" font-family="Tahoma,sans-serif" font-size="8"
-          font-weight="bold" fill="#aaff00">Belfast, NI</text>
-
-    <!-- Compass rose (bottom right) -->
-    <g transform="translate(268,230)">
-      <line x1="0" y1="-12" x2="0" y2="12" stroke="#6600cc" stroke-width="1"/>
-      <line x1="-12" y1="0" x2="12" y2="0" stroke="#6600cc" stroke-width="1"/>
-      <text x="-3" y="-14" font-family="Tahoma" font-size="7" fill="#9933ff">N</text>
-    </g>
-  </svg>`;
-})();
-
-// ── CANVAS GLOBE: Who I Work With ──
-(function() {
-  const canvas = document.getElementById('globe-canvas');
-
-  function sizeCanvas() {
+  function resize() {
     const r = canvas.getBoundingClientRect();
     canvas.width  = r.width  || 300;
     canvas.height = r.height || 260;
   }
-  sizeCanvas();
-  const ctx = canvas.getContext('2d');
+  resize();
+
   const W = () => canvas.width;
   const H = () => canvas.height;
 
-  // 60 randomly scattered pins across the whole globe
-  const partners = [];
-  const rng = (seed) => { // simple seeded random so layout is stable
-    let s = seed;
-    return () => { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; };
-  };
-  const rand = rng(42);
-  for (let i = 0; i < 60; i++) {
-    // Use spherical uniform distribution so poles aren't sparse
-    const u   = rand() * 2 - 1;          // cos(lat) uniform -1..1
-    const lat = Math.asin(u) * 180 / Math.PI;
-    const lon = rand() * 360 - 180;
-    partners.push([lat, lon, '', false]);
-  }
-  // Belfast home pin
-  partners.push([54.60, -5.93, 'Belfast', true]);
+  // Stickman state
+  let man = { x: 120, y: 0, vx: 0, vy: 0, targetX: 120, facing: 1, state: 'idle', frame: 0 };
+  let onGround = false;
+  const GROUND_Y = () => H() - 30;
+  const GRAVITY  = 0.6;
+  const SPEED    = 2.2;
 
-  let rotY = 0.3, rotX = 0.35;
-  let dragging = false, lastX = 0, lastY = 0;
-  let autoSpin = true;
+  // Click inside canvas to set target
+  canvas.addEventListener('click', e => {
+    const r = canvas.getBoundingClientRect();
+    man.targetX = e.clientX - r.left;
+    man.state   = 'walk';
+  });
 
-  function toCart(lat, lon) {
-    const phi   = (90 - lat)  * Math.PI / 180;
-    const theta = (lon + 180) * Math.PI / 180;
-    return {
-      x: -Math.sin(phi) * Math.cos(theta),
-      y:  Math.cos(phi),
-      z:  Math.sin(phi) * Math.sin(theta)
-    };
-  }
-
-  function rotatePoint(p) {
-    const x1 =  p.x * Math.cos(rotY) + p.z * Math.sin(rotY);
-    const z1 = -p.x * Math.sin(rotY) + p.z * Math.cos(rotY);
-    const y2 =  p.y * Math.cos(rotX) - z1  * Math.sin(rotX);
-    const z2 =  p.y * Math.sin(rotX) + z1  * Math.cos(rotX);
-    return { x: x1, y: y2, z: z2 };
-  }
-
-  function project(p, R, cx, cy) {
-    return { x: cx + p.x * R, y: cy - p.y * R };
-  }
-
-  function drawGlobe() {
-    const w = W(), h = H();
-    const cx = w / 2, cy = h / 2;
-    const R  = Math.min(w, h) * 0.40;
-    ctx.clearRect(0, 0, w, h);
-
-    // Sphere fill
-    const grd = ctx.createRadialGradient(cx - R*0.3, cy - R*0.3, R*0.05, cx, cy, R);
-    grd.addColorStop(0, '#1a0033');
-    grd.addColorStop(0.6, '#0d0d1a');
-    grd.addColorStop(1, '#050510');
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.fillStyle = grd;
-    ctx.fill();
-
-    // Atmosphere glow
-    const atm = ctx.createRadialGradient(cx, cy, R * 0.88, cx, cy, R * 1.18);
-    atm.addColorStop(0,   'rgba(102,0,204,0)');
-    atm.addColorStop(0.5, 'rgba(102,0,204,0.15)');
-    atm.addColorStop(1,   'rgba(102,0,204,0)');
-    ctx.beginPath();
-    ctx.arc(cx, cy, R * 1.18, 0, Math.PI * 2);
-    ctx.fillStyle = atm;
-    ctx.fill();
-
-    // Latitude lines
-    for (let lat = -75; lat <= 75; lat += 15) {
-      ctx.beginPath();
-      let first = true;
-      for (let lon = -180; lon <= 180; lon += 3) {
-        const p3 = rotatePoint(toCart(lat, lon));
-        if (p3.z < 0) { first = true; continue; }
-        const pt = project(p3, R, cx, cy);
-        first ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
-        first = false;
-      }
-      ctx.strokeStyle = 'rgba(102,0,204,0.3)';
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
-    }
-
-    // Longitude lines
-    for (let lon = -180; lon < 180; lon += 15) {
-      ctx.beginPath();
-      let first = true;
-      for (let lat = -90; lat <= 90; lat += 3) {
-        const p3 = rotatePoint(toCart(lat, lon));
-        if (p3.z < 0) { first = true; continue; }
-        const pt = project(p3, R, cx, cy);
-        first ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
-        first = false;
-      }
-      ctx.strokeStyle = 'rgba(102,0,204,0.2)';
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
-    }
-
-    // Clip to sphere for dots
+  function drawStickman(x, y, frame, facing, state) {
     ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(facing, 1);
+
+    const C = '#6600cc'; // body colour
+    const W2 = 1.8;
+    ctx.strokeStyle = C;
+    ctx.lineWidth   = W2;
+    ctx.lineCap     = 'round';
+
+    // Head
     ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.arc(0, -38, 8, 0, Math.PI * 2);
+    ctx.stroke();
 
-    partners.forEach(([lat, lon, label, isHome]) => {
-      const p3 = rotatePoint(toCart(lat, lon));
-      if (p3.z < 0) return;
+    // Body
+    ctx.beginPath();
+    ctx.moveTo(0, -30);
+    ctx.lineTo(0, -8);
+    ctx.stroke();
 
-      const pt     = project(p3, R, cx, cy);
-      const dotR   = isHome ? 5 : 3;
-      const colour = isHome ? '#aaff00' : '#9933ff';
-      const glow   = isHome ? 'rgba(170,255,0,0.55)' : 'rgba(153,51,255,0.45)';
+    const t = frame * 0.25;
 
-      // Halo
-      const halo = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, dotR * 3.5);
-      halo.addColorStop(0, glow);
-      halo.addColorStop(1, 'transparent');
+    if (state === 'walk') {
+      // Arms swing
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, dotR * 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = halo;
-      ctx.fill();
-
-      // Dot
+      ctx.moveTo(0, -24);
+      ctx.lineTo(12 * Math.cos(t + 1), -16 + 6 * Math.sin(t + 1));
+      ctx.stroke();
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, dotR, 0, Math.PI * 2);
-      ctx.fillStyle = colour;
-      ctx.fill();
-      ctx.strokeStyle = isHome ? '#330066' : '#ccff33';
-      ctx.lineWidth = 1;
+      ctx.moveTo(0, -24);
+      ctx.lineTo(-12 * Math.cos(t + 1), -16 - 6 * Math.sin(t + 1));
       ctx.stroke();
 
-      // Label only for home
-      if (isHome && p3.z > 0.12) {
-        ctx.font = 'bold 8px Tahoma,sans-serif';
-        ctx.fillStyle = '#aaff00';
-        ctx.textAlign = 'left';
-        ctx.fillText('Belfast', pt.x + dotR + 3, pt.y + 3);
+      // Legs stride
+      ctx.beginPath();
+      ctx.moveTo(0, -8);
+      ctx.lineTo(10 * Math.sin(t), 6);
+      ctx.lineTo(14 * Math.sin(t) + 2, 20);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -8);
+      ctx.lineTo(-10 * Math.sin(t), 6);
+      ctx.lineTo(-14 * Math.sin(t) - 2, 20);
+      ctx.stroke();
+
+    } else if (state === 'jump') {
+      // Arms up
+      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(-14,-32); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(14,-32);  ctx.stroke();
+      // Legs tuck
+      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(-10,4); ctx.lineTo(-6,14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(10,4);  ctx.lineTo(6,14);  ctx.stroke();
+
+    } else {
+      // Idle — subtle breathe
+      const breathe = Math.sin(frame * 0.05) * 1.5;
+      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(-12,-16 + breathe); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-24); ctx.lineTo(12,-16 + breathe);  ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(-8,8);  ctx.lineTo(-6,20); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(8,8);   ctx.lineTo(6,20);  ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  let tick = 0;
+  function loop() {
+    ctx.clearRect(0, 0, W(), H());
+
+    // Floor
+    ctx.fillStyle = '#e8e8e0';
+    ctx.fillRect(0, 0, W(), H());
+
+    // Checkerboard floor strip
+    for (let i = 0; i < Math.ceil(W()/20); i++) {
+      ctx.fillStyle = (i % 2 === 0) ? '#d4d0c8' : '#c8c4bc';
+      ctx.fillRect(i * 20, GROUND_Y() + 10, 20, 20);
+    }
+
+    // Shadow
+    const shadowW = man.state === 'jump' ? 8 : 16;
+    ctx.beginPath();
+    ctx.ellipse(man.x, GROUND_Y() + 12, shadowW, 4, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fill();
+
+    // Physics
+    man.vy += GRAVITY;
+    man.y  += man.vy;
+
+    if (man.y >= GROUND_Y()) {
+      man.y  = GROUND_Y();
+      man.vy = 0;
+      onGround = true;
+    } else {
+      onGround = false;
+      man.state = 'jump';
+    }
+
+    if (onGround) {
+      const dx = man.targetX - man.x;
+      if (Math.abs(dx) > 4) {
+        man.facing = dx > 0 ? 1 : -1;
+        man.x += SPEED * man.facing;
+        man.state = 'walk';
+      } else {
+        man.state = 'idle';
+        man.vx    = 0;
+        // Occasionally idle-jump
+        if (Math.random() < 0.002) man.vy = -10;
+      }
+    }
+
+    // Keep on screen
+    man.x = Math.max(16, Math.min(W() - 16, man.x));
+
+    drawStickman(man.x, man.y, tick, man.facing, man.state);
+    tick++;
+    requestAnimationFrame(loop);
+  }
+
+  // Init on ground
+  man.y = GROUND_Y();
+  loop();
+  window.addEventListener('resize', resize);
+})();
+
+// ── DOOM SCREENSAVER ──
+(function() {
+  const canvas = document.getElementById('doom-canvas');
+  const ctx    = canvas.getContext('2d');
+  const PW = 80, PH = 60; // pixel resolution — chunky on purpose
+
+  canvas.width  = PW;
+  canvas.height = PH;
+
+  // Palette
+  const BLACK  = '#000000';
+  const RED    = '#cc0000';
+  const DKRED  = '#880000';
+  const ORANGE = '#cc4400';
+  const BROWN  = '#553300';
+  const GREY   = '#555555';
+  const DKGREY = '#333333';
+  const GREEN  = '#00aa00';
+  const LIME   = '#aaff00';
+  const FLESH  = '#cc8844';
+
+  // Game state
+  let frame = 0;
+  const enemies = [];
+  const bullets = [];
+  const particles = [];
+
+  // Spawn enemies occasionally
+  function spawnEnemy() {
+    enemies.push({
+      x: Math.random() < 0.5 ? 2 : PW - 8,
+      y: PH - 16,
+      vx: (Math.random() * 0.4 + 0.2) * (Math.random() < 0.5 ? 1 : -1),
+      hp: 3,
+      frame: 0,
+      type: Math.random() < 0.5 ? 'imp' : 'demon'
+    });
+  }
+
+  // Player
+  const player = { x: PW / 2, health: 100, angle: 0, shootCooldown: 0 };
+
+  // Pixel helpers
+  function px(x, y, colour, w = 1, h = 1) {
+    ctx.fillStyle = colour;
+    ctx.fillRect(Math.floor(x), Math.floor(y), w, h);
+  }
+
+  function drawScene() {
+    // Sky — dark hell red gradient (manual bands)
+    for (let y = 0; y < PH * 0.45; y++) {
+      const t   = y / (PH * 0.45);
+      const r   = Math.floor(40 + t * 120);
+      const g   = Math.floor(t * 10);
+      ctx.fillStyle = `rgb(${r},${g},0)`;
+      ctx.fillRect(0, y, PW, 1);
+    }
+
+    // Hell mountains silhouette
+    ctx.fillStyle = DKRED;
+    for (let x = 0; x < PW; x += 8) {
+      const h2 = 4 + Math.floor(Math.sin(x * 0.7 + frame * 0.005) * 3 + Math.sin(x * 0.3) * 2);
+      ctx.fillRect(x, Math.floor(PH * 0.45) - h2, 8, h2 + 2);
+    }
+
+    // Floor — stone tiles
+    for (let y = Math.floor(PH * 0.45); y < PH; y++) {
+      const t = (y - PH * 0.45) / (PH * 0.55);
+      const v = Math.floor(60 + t * 60);
+      ctx.fillStyle = `rgb(${v},${Math.floor(v*0.7)},${Math.floor(v*0.5)})`;
+      ctx.fillRect(0, y, PW, 1);
+    }
+
+    // Floor tile grid lines
+    ctx.fillStyle = DKGREY;
+    for (let x = 0; x < PW; x += 10) ctx.fillRect(x, Math.floor(PH * 0.45), 1, PH);
+    for (let y = Math.floor(PH * 0.5); y < PH; y += 8) ctx.fillRect(0, y, PW, 1);
+
+    // Pentagram on floor (static decoration)
+    ctx.fillStyle = '#440000';
+    px(PW/2 - 1, PH - 10, '#440000', 3, 1);
+    px(PW/2,     PH - 13, '#440000', 1, 3);
+    px(PW/2 - 2, PH - 8,  '#440000', 1, 1);
+    px(PW/2 + 2, PH - 8,  '#440000', 1, 1);
+
+    // Torches on walls
+    [-1, 1].forEach(side => {
+      const tx = side === -1 ? 6 : PW - 8;
+      const flicker = Math.sin(frame * 0.3 + side) * 1;
+      px(tx, PH * 0.5, BROWN, 2, 4);
+      ctx.fillStyle = `rgba(255,${100 + Math.floor(flicker * 30)},0,0.9)`;
+      ctx.beginPath();
+      ctx.arc(tx + 1, PH * 0.5 - 2 + flicker, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Skulls on walls
+    px(14, PH * 0.48 - 3, FLESH, 4, 3);
+    px(15, PH * 0.48 - 4, FLESH, 2, 1);
+    px(14, PH * 0.48,     BLACK, 1, 1);
+    px(16, PH * 0.48,     BLACK, 1, 1);
+    px(PW - 18, PH * 0.48 - 3, FLESH, 4, 3);
+    px(PW - 17, PH * 0.48 - 4, FLESH, 2, 1);
+    px(PW - 18, PH * 0.48,     BLACK, 1, 1);
+    px(PW - 16, PH * 0.48,     BLACK, 1, 1);
+  }
+
+  function drawPlayer() {
+    const px2 = Math.floor(player.x);
+    const py  = PH - 14;
+
+    // Legs
+    const legSwing = Math.sin(frame * 0.25) * 2;
+    ctx.fillStyle = DKGREY;
+    ctx.fillRect(px2 - 3, py + 6, 2, 6);
+    ctx.fillRect(px2 + 1, py + 6, 2, 6);
+    ctx.fillStyle = '#333366';
+    ctx.fillRect(px2 - 3, py + 10, 2, 2);
+    ctx.fillRect(px2 + 1, py + 10, 2, 2);
+
+    // Body / armour
+    ctx.fillStyle = DKGREY;
+    ctx.fillRect(px2 - 4, py, 8, 7);
+    ctx.fillStyle = GREEN;
+    ctx.fillRect(px2 - 3, py + 1, 6, 5);
+
+    // Head
+    ctx.fillStyle = FLESH;
+    ctx.fillRect(px2 - 2, py - 4, 5, 4);
+    ctx.fillStyle = '#334';
+    ctx.fillRect(px2 - 1, py - 3, 3, 2); // visor
+
+    // Gun arm
+    ctx.fillStyle = GREY;
+    ctx.fillRect(px2 + 3, py + 2, 6, 2);
+    ctx.fillStyle = DKGREY;
+    ctx.fillRect(px2 + 7, py + 1, 3, 3);
+
+    // Muzzle flash when shooting
+    if (player.shootCooldown > 6) {
+      ctx.fillStyle = '#ffcc00';
+      ctx.fillRect(px2 + 10, py + 1, 3, 3);
+      ctx.fillStyle = 'rgba(255,200,0,0.5)';
+      ctx.beginPath();
+      ctx.arc(px2 + 12, py + 2, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawEnemy(e) {
+    const ex = Math.floor(e.x);
+    const ey = Math.floor(e.y);
+    const bob = Math.sin(e.frame * 0.2) * 1;
+
+    if (e.type === 'imp') {
+      // Brown imp
+      ctx.fillStyle = '#774422';
+      ctx.fillRect(ex, ey - 10 + bob, 6, 10);
+      ctx.fillStyle = '#aa5533';
+      ctx.fillRect(ex + 1, ey - 13 + bob, 4, 4); // head
+      ctx.fillStyle = RED;
+      ctx.fillRect(ex + 1, ey - 12 + bob, 1, 1); // eye L
+      ctx.fillRect(ex + 3, ey - 12 + bob, 1, 1); // eye R
+      // horns
+      ctx.fillStyle = DKRED;
+      ctx.fillRect(ex + 1, ey - 15 + bob, 1, 2);
+      ctx.fillRect(ex + 4, ey - 15 + bob, 1, 2);
+      // arms
+      const armSwing = Math.sin(e.frame * 0.3) * 2;
+      ctx.fillStyle = '#774422';
+      ctx.fillRect(ex - 2, ey - 8 + armSwing, 2, 5);
+      ctx.fillRect(ex + 6, ey - 8 - armSwing, 2, 5);
+    } else {
+      // Pink demon — bigger
+      ctx.fillStyle = '#cc6688';
+      ctx.fillRect(ex - 1, ey - 12 + bob, 8, 12);
+      ctx.fillStyle = '#ee88aa';
+      ctx.fillRect(ex, ey - 16 + bob, 6, 5);
+      ctx.fillStyle = RED;
+      ctx.fillRect(ex + 1, ey - 15 + bob, 1, 1);
+      ctx.fillRect(ex + 4, ey - 15 + bob, 1, 1);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(ex + 1, ey - 13 + bob, 1, 1); // teeth
+      ctx.fillRect(ex + 3, ey - 13 + bob, 1, 1);
+      ctx.fillRect(ex + 5, ey - 13 + bob, 1, 1);
+    }
+
+    // Health bar
+    if (e.hp < 3) {
+      ctx.fillStyle = '#550000';
+      ctx.fillRect(ex, ey - 18, 6, 2);
+      ctx.fillStyle = RED;
+      ctx.fillRect(ex, ey - 18, Math.ceil(6 * e.hp / 3), 2);
+    }
+  }
+
+  function drawBullet(b) {
+    ctx.fillStyle = ORANGE;
+    ctx.fillRect(Math.floor(b.x), Math.floor(b.y), 3, 2);
+    ctx.fillStyle = '#ffcc00';
+    ctx.fillRect(Math.floor(b.x) + 1, Math.floor(b.y), 1, 1);
+  }
+
+  function drawParticle(p2) {
+    ctx.fillStyle = p2.colour;
+    ctx.globalAlpha = p2.life / p2.maxLife;
+    ctx.fillRect(Math.floor(p2.x), Math.floor(p2.y), p2.size, p2.size);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawHUD() {
+    // HUD bar
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, PH - 8, PW, 8);
+    ctx.fillStyle = '#333';
+    ctx.fillRect(0, PH - 8, PW, 1);
+
+    // Health
+    ctx.fillStyle = RED;
+    ctx.fillRect(2, PH - 6, Math.floor(player.health / 100 * 30), 4);
+    ctx.fillStyle = '#550000';
+    ctx.fillRect(2, PH - 6, 30, 4);
+    ctx.fillStyle = RED;
+    ctx.fillRect(2, PH - 6, Math.floor(player.health / 100 * 30), 4);
+
+    // Skull icon for health
+    ctx.fillStyle = FLESH;
+    ctx.fillRect(34, PH - 7, 3, 3);
+    ctx.fillStyle = BLACK;
+    ctx.fillRect(34, PH - 6, 1, 1);
+    ctx.fillRect(36, PH - 6, 1, 1);
+
+    // Ammo dots
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = i < 3 ? ORANGE : '#333';
+      ctx.fillRect(PW - 14 + i * 3, PH - 5, 2, 3);
+    }
+
+    // Kill counter
+    ctx.fillStyle = LIME;
+    ctx.font = '4px monospace';
+    ctx.fillText(`${killCount} KILLS`, PW / 2 - 8, PH - 2);
+  }
+
+  let killCount = 0;
+  let spawnTimer = 0;
+
+  function gameLoop() {
+    ctx.clearRect(0, 0, PW, PH);
+    drawScene();
+
+    // Auto-pilot player — drift toward nearest enemy
+    const nearestEnemy = enemies.reduce((best, e) => {
+      const d = Math.abs(e.x - player.x);
+      return (!best || d < Math.abs(best.x - player.x)) ? e : best;
+    }, null);
+
+    if (nearestEnemy) {
+      const dx = nearestEnemy.x - player.x;
+      if (Math.abs(dx) > 12) player.x += Math.sign(dx) * 0.5;
+      // Shoot when close-ish
+      if (Math.abs(dx) < 35 && player.shootCooldown <= 0) {
+        bullets.push({ x: player.x + 8, y: PH - 12, vx: Math.sign(dx) * 4, vy: 0 });
+        player.shootCooldown = 8;
+      }
+    } else {
+      // Wander
+      player.x += Math.sin(frame * 0.02) * 0.3;
+    }
+    player.x = Math.max(6, Math.min(PW - 12, player.x));
+    if (player.shootCooldown > 0) player.shootCooldown--;
+
+    // Spawn enemies
+    spawnTimer++;
+    if (spawnTimer > 90 && enemies.length < 4) {
+      spawnEnemy();
+      spawnTimer = 0;
+    }
+
+    // Update enemies
+    enemies.forEach(e => {
+      e.x += e.vx;
+      e.frame++;
+      if (e.x < 2 || e.x > PW - 10) e.vx *= -1;
+    });
+
+    // Update bullets
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      const b = bullets[i];
+      b.x += b.vx;
+      b.y += b.vy;
+      // Check enemy hits
+      let hit = false;
+      for (let j = enemies.length - 1; j >= 0; j--) {
+        const e = enemies[j];
+        if (Math.abs(b.x - e.x - 3) < 6 && Math.abs(b.y - e.y + 5) < 8) {
+          e.hp--;
+          // Blood splatter particles
+          for (let k = 0; k < 6; k++) {
+            particles.push({
+              x: e.x + 3, y: e.y - 5,
+              vx: (Math.random() - 0.5) * 2,
+              vy: (Math.random() - 0.8) * 2,
+              life: 12, maxLife: 12,
+              colour: Math.random() < 0.5 ? RED : DKRED,
+              size: Math.random() < 0.5 ? 1 : 2
+            });
+          }
+          if (e.hp <= 0) {
+            // Death explosion
+            for (let k = 0; k < 12; k++) {
+              particles.push({
+                x: e.x + 3, y: e.y - 5,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3,
+                life: 20, maxLife: 20,
+                colour: [RED, ORANGE, '#ffcc00', FLESH][Math.floor(Math.random()*4)],
+                size: Math.floor(Math.random() * 2) + 1
+              });
+            }
+            enemies.splice(j, 1);
+            killCount++;
+            player.health = Math.min(100, player.health + 5);
+          }
+          hit = true;
+          break;
+        }
+      }
+      if (hit || b.x < 0 || b.x > PW) bullets.splice(i, 1);
+    }
+
+    // Update particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p2 = particles[i];
+      p2.x    += p2.vx;
+      p2.y    += p2.vy;
+      p2.vy   += 0.15;
+      p2.life--;
+      if (p2.life <= 0) particles.splice(i, 1);
+    }
+
+    // Player takes damage from nearby enemies
+    enemies.forEach(e => {
+      if (Math.abs(e.x - player.x) < 8 && frame % 40 === 0) {
+        player.health = Math.max(10, player.health - 8);
+        for (let k = 0; k < 4; k++) {
+          particles.push({
+            x: player.x, y: PH - 10,
+            vx: (Math.random() - 0.5) * 2,
+            vy: -Math.random() * 2,
+            life: 10, maxLife: 10,
+            colour: RED, size: 1
+          });
+        }
       }
     });
 
-    ctx.restore();
+    // Draw everything
+    particles.forEach(drawParticle);
+    enemies.forEach(drawEnemy);
+    bullets.forEach(drawBullet);
+    drawPlayer();
+    drawHUD();
 
-    // Globe rim
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(102,0,204,0.7)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    frame++;
+    requestAnimationFrame(gameLoop);
   }
 
-  function tick() {
-    if (autoSpin) rotY += 0.004;
-    drawGlobe();
-    requestAnimationFrame(tick);
-  }
-  tick();
-
-  // Drag to spin
-  canvas.addEventListener('mousedown', e => {
-    dragging = true; autoSpin = false;
-    lastX = e.clientX; lastY = e.clientY;
-    e.stopPropagation();
-  });
-  document.addEventListener('mousemove', e => {
-    if (!dragging) return;
-    rotY += (e.clientX - lastX) * 0.01;
-    rotX += (e.clientY - lastY) * 0.008;
-    rotX = Math.max(-1.2, Math.min(1.2, rotX));
-    lastX = e.clientX; lastY = e.clientY;
-  });
-  document.addEventListener('mouseup', () => { dragging = false; });
-
-  window.addEventListener('resize', sizeCanvas);
+  // Kick off with a couple of enemies
+  spawnEnemy();
+  setTimeout(spawnEnemy, 1500);
+  gameLoop();
 })();
 </script>
 </body>
