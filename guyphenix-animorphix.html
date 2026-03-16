@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guy Phenix :: Animorphix Studio 98</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tahoma&family=Verdana&display=swap');
+
+:root {
+  /* Animorphix Y2K palette */
+  --nx-black:    #0d0d0d;
+  --nx-purple:   #6600cc;
+  --nx-purple2:  #9933ff;
+  --nx-lime:     #aaff00;
+  --nx-lime2:    #ccff33;
+  --nx-white:    #f0f0f0;
+  --nx-grey:     #e8e8e0;
+  --nx-midgrey:  #c8c8c0;
+  --nx-darkgrey: #888880;
+  --nx-panel:    #f2f2ea;
+
+  /* Win98-style borders recoloured */
+  --win-light:   #ffffff;
+  --win-dark:    #888880;
+  --win-darker:  #444440;
+
+  /* Title bar: purple gradient */
+  --title-start: #4400aa;
+  --title-end:   #9933ff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Tahoma', 'Verdana', sans-serif;
+  font-size: 11px;
+  background: var(--nx-black);
+  height: 100vh;
+  overflow: hidden;
+  cursor: default;
+  position: relative;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── OUTER APP FRAME ── */
+#app-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+  background: var(--nx-grey);
+}
+
+/* ── TITLE BAR ── */
+#titlebar {
+  height: 24px;
+  background: linear-gradient(to right, var(--title-start), var(--title-end));
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 6px;
+  flex-shrink: 0;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+/* Memphis zigzag stripe on titlebar */
+#titlebar::before {
+  content: '';
+  position: absolute;
+  right: 100px; top: 0; bottom: 0;
+  width: 200px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 6px,
+    rgba(170,255,0,0.15) 6px,
+    rgba(170,255,0,0.15) 8px
+  );
+  pointer-events: none;
+}
+.tb-logo {
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+}
+#titlebar .tb-title {
+  color: var(--nx-white);
+  font-size: 11px;
+  font-weight: bold;
+  flex: 1;
+  letter-spacing: 0.3px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+.tb-title span {
+  color: var(--nx-lime);
+  font-weight: bold;
+}
+.tb-btn {
+  width: 16px; height: 14px;
+  background: var(--nx-grey);
+  border: 1px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #000;
+  font-weight: bold;
+}
+.tb-btn:active {
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+}
+.tb-btn.close-btn { color: #c00; font-weight: bold; }
+
+/* ── MENU BAR ── */
+#menubar {
+  height: 20px;
+  background: var(--nx-panel);
+  border-bottom: 2px solid var(--nx-purple);
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+.menu-item {
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--nx-black);
+}
+.menu-item:hover {
+  background: var(--nx-purple);
+  color: var(--nx-lime);
+  border-color: var(--nx-purple2) var(--nx-purple) var(--nx-purple) var(--nx-purple2);
+}
+
+/* ── TOOLBARS ── */
+#toolbars { display: flex; flex-direction: column; flex-shrink: 0; }
+.toolbar {
+  height: 28px;
+  background: var(--nx-panel);
+  border-bottom: 1px solid var(--nx-midgrey);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 2px;
+}
+.toolbar-sep {
+  width: 1px; height: 18px;
+  background: var(--win-dark);
+  margin: 0 3px;
+  border-right: 1px solid var(--win-light);
+}
+.t-btn {
+  width: 22px; height: 20px;
+  background: var(--nx-panel);
+  border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+}
+.t-btn:hover {
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  background: #fff;
+}
+.t-btn:active {
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+}
+.t-label { font-size: 11px; color: #555; padding: 0 4px; font-weight: bold; }
+.t-input {
+  height: 18px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  font-size: 11px;
+  font-family: 'Tahoma', sans-serif;
+  padding: 0 3px;
+  color: #000;
+}
+.nx-action-btn {
+  background: var(--nx-purple);
+  color: var(--nx-lime);
+  border: 1px solid;
+  border-color: var(--nx-purple2) var(--nx-black) var(--nx-black) var(--nx-purple2);
+  font-size: 9px;
+  height: 20px;
+  padding: 0 8px;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  font-family: 'Tahoma', sans-serif;
+}
+.nx-action-btn:hover { background: var(--nx-purple2); }
+
+/* ── WORKSPACE ── */
+#workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── LEFT TOOLS ── */
+#ps-tools {
+  width: 30px;
+  background: var(--nx-panel);
+  border-right: 2px solid var(--nx-purple);
+  padding: 4px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.ps-tool {
+  width: 22px; height: 22px;
+  background: var(--nx-panel);
+  border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+}
+.ps-tool:hover, .ps-tool.active {
+  background: var(--nx-purple);
+  color: var(--nx-lime);
+  border-color: var(--nx-purple2) var(--nx-black) var(--nx-black) var(--nx-purple2);
+}
+.ps-tool-sep {
+  height: 2px;
+  background: var(--nx-purple);
+  margin: 3px 0;
+  opacity: 0.3;
+}
+.ps-colors { margin-top: auto; position: relative; width: 22px; height: 22px; }
+.ps-bg-color {
+  position: absolute; bottom: 0; right: 0;
+  width: 13px; height: 13px;
+  background: var(--nx-lime); border: 1px solid #000;
+}
+.ps-fg-color {
+  position: absolute; top: 0; left: 0;
+  width: 13px; height: 13px;
+  background: var(--nx-purple); border: 1px solid #000;
+}
+
+/* ── CANVAS AREA ── */
+#canvas-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  /* Memphis-style dotted/geometric background */
+  background-color: #1a1a2e;
+  background-image:
+    radial-gradient(circle, rgba(170,255,0,0.12) 1px, transparent 1px),
+    radial-gradient(circle, rgba(102,0,204,0.2) 1px, transparent 1px);
+  background-size: 24px 24px, 48px 48px;
+  background-position: 0 0, 12px 12px;
+}
+/* Memphis decorative shapes on canvas bg */
+#canvas-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(45deg, rgba(170,255,0,0.04) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(102,0,204,0.04) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(170,255,0,0.04) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(102,0,204,0.04) 75%);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* ── STATUS BAR ── */
+#statusbar {
+  height: 22px;
+  background: var(--nx-panel);
+  border-top: 2px solid var(--nx-purple);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.sb-panel {
+  height: 15px;
+  padding: 0 8px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  font-size: 10px;
+  display: flex; align-items: center;
+  color: #333;
+  min-width: 80px;
+}
+.sb-panel.nx-brand {
+  background: var(--nx-purple);
+  color: var(--nx-lime);
+  border-color: var(--nx-purple2) var(--nx-black) var(--nx-black) var(--nx-purple2);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+/* ── SHARED WINDOW CHROME ── */
+.nx-window {
+  position: absolute;
+  background: var(--nx-panel);
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.5), 5px 5px 0 1px var(--nx-purple);
+  z-index: 100;
+  user-select: none;
+}
+.nx-titlebar {
+  height: 22px;
+  background: linear-gradient(to right, var(--title-start), var(--title-end));
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  gap: 5px;
+  cursor: move;
+  position: relative;
+  overflow: hidden;
+}
+/* Lime accent stripe on window titlebars */
+.nx-titlebar::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--nx-lime);
+}
+.nx-titlebar .win-icon { font-size: 12px; flex-shrink: 0; padding-left: 2px; }
+.nx-titlebar .win-title {
+  color: var(--nx-white);
+  font-size: 11px;
+  font-weight: bold;
+  flex: 1;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  letter-spacing: 0.3px;
+}
+.nx-win-btn {
+  width: 15px; height: 13px;
+  background: var(--nx-grey);
+  border: 1px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  font-size: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+.nx-win-btn:active {
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+}
+.nx-win-btn.close { color: #cc0000; }
+
+/* ── PHOTO WINDOW ── */
+#photo-window {
+  top: 50px; left: 70px;
+  width: 300px;
+}
+.photo-inset {
+  border: 2px solid;
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  background: #444;
+  width: 100%; aspect-ratio: 1;
+  overflow: hidden; position: relative;
+}
+.photo-inset img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  filter: saturate(1.05) contrast(1.05);
+}
+.photo-info-strip {
+  display: flex;
+  background: #e0e0d8;
+  border: 1px solid;
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  border-top: none;
+  padding: 2px 6px;
+  gap: 10px;
+}
+.pi-item { font-size: 10px; color: #444; }
+.pi-item span { color: var(--nx-purple); font-weight: bold; }
+.photo-controls {
+  display: flex; align-items: center;
+  margin: 6px 8px; gap: 4px;
+}
+.zoom-btn {
+  width: 18px; height: 16px;
+  background: var(--nx-panel);
+  border: 1px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  font-size: 11px; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #333;
+}
+.zoom-btn:hover { background: var(--nx-purple); color: var(--nx-lime); }
+.zoom-slider {
+  flex: 1; height: 4px;
+  background: white;
+  border: 1px solid;
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  appearance: none; -webkit-appearance: none;
+  outline: none; cursor: pointer;
+}
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px; height: 14px;
+  background: var(--nx-purple);
+  border: 1px solid var(--nx-purple2);
+  cursor: pointer;
+}
+.zoom-label { font-size: 10px; color: var(--nx-purple); font-weight: bold; width: 32px; text-align: center; }
+
+/* ── ABOUT WINDOW ── */
+#about-window { top: 50px; left: 400px; width: 290px; }
+.nx-win-body { padding: 10px 12px; background: var(--nx-panel); }
+.about-content { font-size: 11px; line-height: 1.7; color: #222; }
+.about-content h2 {
+  font-size: 13px; font-weight: bold; color: var(--nx-purple);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--nx-lime);
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: 0.5px;
+}
+.about-content h2::before {
+  content: '▶';
+  color: var(--nx-lime);
+  font-size: 8px;
+  background: var(--nx-purple);
+  padding: 2px 3px;
+}
+.about-content p { margin-bottom: 8px; }
+.about-content a { color: var(--nx-purple); font-weight: bold; text-decoration: none; }
+.about-content a:hover { color: var(--nx-purple2); text-decoration: underline; }
+.about-footer {
+  font-size: 10px; color: #888;
+  border-top: 1px solid var(--nx-midgrey);
+  padding-top: 6px; margin-top: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.about-footer::before {
+  content: '';
+  display: inline-block; width: 8px; height: 8px;
+  background: var(--nx-lime); border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── LINKS WINDOW ── */
+#links-window { top: 310px; left: 400px; width: 290px; }
+.li-content { display: flex; flex-direction: column; gap: 8px; }
+.li-link-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: white;
+  border: 2px solid var(--nx-midgrey);
+  cursor: pointer; text-decoration: none; color: #000;
+}
+.li-link-btn:hover {
+  background: var(--nx-purple);
+  color: var(--nx-lime);
+  border-color: var(--nx-purple2);
+}
+.li-icon {
+  width: 26px; height: 26px;
+  background: #0077b5;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 14px; font-weight: bold;
+  flex-shrink: 0; font-family: 'Georgia', serif;
+  border: 1px solid #005885;
+}
+.li-link-btn:hover .li-icon { background: var(--nx-lime); color: var(--nx-purple); border-color: var(--nx-lime2); }
+.li-text { font-size: 11px; font-weight: bold; }
+.li-sub { font-size: 10px; color: #666; }
+.li-link-btn:hover .li-sub { color: rgba(170,255,0,0.8); }
+.li-note {
+  font-size: 10px; color: #555;
+  border: 1px solid var(--nx-midgrey);
+  background: #fffff8;
+  padding: 5px 7px;
+  display: flex; gap: 5px; align-items: flex-start;
+}
+.li-note::before { content: 'ℹ'; color: var(--nx-purple); flex-shrink: 0; font-weight: bold; }
+
+/* ── SPLASH / MORPH INTRO ── */
+#splash {
+  position: fixed; inset: 0;
+  background: var(--nx-black);
+  z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  /* Memphis background */
+  background-image:
+    repeating-linear-gradient(45deg, rgba(170,255,0,0.03) 0px, rgba(170,255,0,0.03) 2px, transparent 2px, transparent 20px),
+    repeating-linear-gradient(-45deg, rgba(102,0,204,0.04) 0px, rgba(102,0,204,0.04) 2px, transparent 2px, transparent 20px);
+}
+
+/* The logo card that morphs into the app window */
+#splash-card {
+  width: 220px;
+  background: var(--nx-panel);
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.5), 6px 6px 0 2px var(--nx-purple);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+
+  /* Phase 1: sit still for 1.2s, then... */
+  /* Phase 2: snap-maximise over 0.18s with a tiny overshoot */
+  /* Phase 3: freeze full-screen, then app snaps in underneath */
+  animation: card-morph 0.22s cubic-bezier(0.2, 0, 0.8, 1.4) 1.4s forwards;
+  transform-origin: center center;
+}
+
+@keyframes card-morph {
+  0%   { width: 220px;  height: auto; transform: scale(1);    opacity: 1; }
+  60%  { transform: scale(1.04);  opacity: 1; }
+  90%  { transform: scale(1.0);   opacity: 1; }
+  100% { transform: scale(1.0);   opacity: 0; width: 100vw; height: 100vh; }
+}
+
+/* We fake the maximise by also animating the splash overlay itself */
+#splash {
+  animation: splash-bg-out 0.12s steps(1) 1.58s forwards;
+}
+@keyframes splash-bg-out {
+  to { opacity: 0; pointer-events: none; display: none; }
+}
+
+/* Win98-style maximise flash — white border flicker before reveal */
+#splash::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: var(--win-light);
+  opacity: 0;
+  pointer-events: none;
+  animation: win-flash 0.18s steps(2) 1.4s forwards;
+}
+@keyframes win-flash {
+  0%   { opacity: 0; }
+  33%  { opacity: 1; }
+  66%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.splash-card-titlebar {
+  width: 100%;
+  height: 22px;
+  background: linear-gradient(to right, var(--title-start), var(--title-end));
+  display: flex; align-items: center;
+  padding: 0 6px; gap: 6px;
+  color: white; font-size: 11px; font-weight: bold;
+  flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.splash-card-titlebar::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--nx-lime);
+}
+.splash-card-titlebar .tb-btn { background: var(--nx-grey); }
+
+.splash-card-body {
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: var(--nx-black);
+  width: 100%;
+}
+
+.splash-big-logo {
+  width: 100px; height: 100px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.splash-big-logo svg {
+  width: 100px; height: 100px;
+  /* slow rotate to sell the "morphing" feel */
+  animation: logo-spin 8s linear infinite;
+}
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Pulsing ring around logo */
+.splash-big-logo::before {
+  content: '';
+  position: absolute; inset: -8px;
+  border: 2px solid var(--nx-lime);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: ring-pulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes ring-pulse {
+  from { opacity: 0.15; transform: scale(0.95); }
+  to   { opacity: 0.5;  transform: scale(1.05); }
+}
+
+.splash-brand-name {
+  font-size: 22px; font-weight: bold;
+  color: var(--nx-white);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1;
+}
+.splash-brand-name span { color: var(--nx-lime); }
+
+.splash-tagline {
+  font-size: 9px; color: var(--nx-purple2);
+  letter-spacing: 3px; text-transform: uppercase;
+  font-weight: bold; text-align: center;
+}
+
+.splash-card-footer {
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--nx-panel);
+  border-top: 2px solid var(--nx-lime);
+  font-size: 9px; color: #888;
+  font-family: 'Courier New', monospace;
+  display: flex; justify-content: space-between;
+}
+.splash-card-footer span { color: var(--nx-purple); font-weight: bold; }
+
+/* Click ripples — lime this time */
+.click-ripple {
+  position: fixed;
+  width: 20px; height: 20px;
+  border: 2px solid var(--nx-lime);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  animation: ripple-out 0.5s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+@keyframes ripple-out {
+  from { width: 4px; height: 4px; opacity: 1; }
+  to   { width: 32px; height: 32px; opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH — Win98 maximise morph -->
+<div id="splash">
+  <div id="splash-card">
+
+    <div class="splash-card-titlebar">
+      <svg width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+        <rect width="32" height="32" fill="#4400aa"/>
+        <circle cx="16" cy="16" r="11" fill="none" stroke="#aaff00" stroke-width="2" stroke-dasharray="4 2"/>
+        <polygon points="16,5 25,10 25,22 16,27 7,22 7,10" fill="none" stroke="#ccff33" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="3.5" fill="#aaff00"/>
+      </svg>
+      Animorphix Studio 98
+      <div style="margin-left:auto;display:flex;gap:2px">
+        <div class="tb-btn">_</div>
+        <div class="tb-btn">□</div>
+        <div class="tb-btn close-btn">✕</div>
+      </div>
+    </div>
+
+    <div class="splash-card-body">
+      <div class="splash-big-logo">
+        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="26" fill="none" stroke="#6600cc" stroke-width="2.5" stroke-dasharray="5 3"/>
+          <polygon points="30,6 52,18 52,42 30,54 8,42 8,18" fill="none" stroke="#aaff00" stroke-width="2.5"/>
+          <path d="M30,30 L52,18 A26,26 0 0,1 52,42 Z" fill="#6600cc" opacity="0.5"/>
+          <path d="M30,30 L30,6 A26,26 0 0,1 52,18 Z" fill="#aaff00" opacity="0.4"/>
+          <circle cx="30" cy="30" r="5" fill="#aaff00"/>
+          <circle cx="30" cy="30" r="2.5" fill="#330066"/>
+          <line x1="30" y1="30" x2="52" y2="18" stroke="#aaff00" stroke-width="0.8" opacity="0.6"/>
+          <line x1="30" y1="30" x2="8"  y2="18" stroke="#aaff00" stroke-width="0.8" opacity="0.4"/>
+          <line x1="30" y1="30" x2="30" y2="6"  stroke="#ccff33" stroke-width="0.8" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="splash-brand-name">Animo<span>rphix</span></div>
+      <div class="splash-tagline">Shape Your World · Since 1997</div>
+    </div>
+
+    <div class="splash-card-footer">
+      <span>STUDIO 98 PRO</span>
+      <span style="color:#888">AMX-S98 · SN: 1998-GPHX-0042</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- APP FRAME -->
+<div id="app-frame">
+
+  <!-- TITLE BAR -->
+  <div id="titlebar">
+    <svg class="tb-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" fill="#4400aa"/>
+      <circle cx="16" cy="16" r="11" fill="none" stroke="#aaff00" stroke-width="2" stroke-dasharray="4 2"/>
+      <polygon points="16,5 25,10 25,22 16,27 7,22 7,10" fill="none" stroke="#ccff33" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="3.5" fill="#aaff00"/>
+    </svg>
+    <div class="tb-title"><span>Animorphix</span> Studio 98 — [guyphenix.amx]</div>
+    <div class="tb-btn">_</div>
+    <div class="tb-btn">□</div>
+    <div class="tb-btn close-btn">✕</div>
+  </div>
+
+  <!-- MENU BAR -->
+  <div id="menubar">
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Insert</span>
+    <span class="menu-item">Format</span>
+    <span class="menu-item">Site</span>
+    <span class="menu-item">Window</span>
+    <span class="menu-item">Help</span>
+  </div>
+
+  <!-- TOOLBARS -->
+  <div id="toolbars">
+    <div class="toolbar">
+      <button class="t-btn" title="New">📄</button>
+      <button class="t-btn" title="Open">📂</button>
+      <button class="t-btn" title="Save">💾</button>
+      <div class="toolbar-sep"></div>
+      <button class="t-btn" title="Cut">✂</button>
+      <button class="t-btn" title="Copy">⎘</button>
+      <button class="t-btn" title="Paste">📋</button>
+      <div class="toolbar-sep"></div>
+      <button class="t-btn" title="Undo">↩</button>
+      <button class="t-btn" title="Redo">↪</button>
+      <div class="toolbar-sep"></div>
+      <span class="t-label">Zoom:</span>
+      <input class="t-input" value="100%" readonly style="width:48px">
+      <div class="toolbar-sep"></div>
+      <span class="t-label">Site:</span>
+      <input class="t-input" value="guyphenix.amx" readonly style="width:100px">
+      <div class="toolbar-sep"></div>
+      <button class="nx-action-btn">▶ PUBLISH</button>
+      <button class="nx-action-btn" style="background:#aaff00;color:#330066;border-color:#ccff33 #558800 #558800 #ccff33;margin-left:3px">⚡ PREVIEW</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div id="workspace">
+
+    <!-- LEFT TOOLS -->
+    <div id="ps-tools">
+      <div class="ps-tool active" title="Select">↖</div>
+      <div class="ps-tool" title="Move">✦</div>
+      <div class="ps-tool" title="Crop">⊡</div>
+      <div class="ps-tool-sep"></div>
+      <div class="ps-tool" title="Text">T</div>
+      <div class="ps-tool" title="Image">🖼</div>
+      <div class="ps-tool" title="Link">🔗</div>
+      <div class="ps-tool" title="Table">⊞</div>
+      <div class="ps-tool-sep"></div>
+      <div class="ps-tool" title="Zoom">🔍</div>
+      <div class="ps-tool" title="Code">&lt;/&gt;</div>
+      <div class="ps-tool-sep"></div>
+      <div class="ps-colors">
+        <div class="ps-bg-color"></div>
+        <div class="ps-fg-color"></div>
+      </div>
+    </div>
+
+    <!-- CANVAS -->
+    <div id="canvas-area">
+
+      <!-- PHOTO WINDOW -->
+      <div class="nx-window" id="photo-window">
+        <div class="nx-titlebar" id="photo-drag-handle">
+          <span class="win-icon">🖼</span>
+          <span class="win-title">guyphenix_portrait.jpg @ 100%</span>
+          <div class="nx-win-btn">_</div>
+          <div class="nx-win-btn">□</div>
+          <div class="nx-win-btn close fw-close" data-window="photo-window">✕</div>
+        </div>
+        <div style="padding:8px;">
+          <div class="photo-inset">
+            <img src="https://guyphenix.com/img/guy.jpg"
+                 alt="Guy Phenix"
+                 id="profile-img"
+                 onerror="this.onerror=null;this.src='https://media.licdn.com/dms/image/v2/C4D03AQHEt7zJpLoNaQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1647874543937?e=2147483647&v=beta&t=OcGG6cnb-zLINwHvYme7THiEg0tknesZe5bi5ovBrE8'">
+          </div>
+          <div class="photo-info-strip">
+            <span class="pi-item">Mode: <span>RGB</span></span>
+            <span class="pi-item">400×400 <span>px</span></span>
+            <span class="pi-item">Quality: <span>High</span></span>
+          </div>
+          <div class="photo-controls">
+            <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+            <input type="range" class="zoom-slider" id="zoom-slider" min="50" max="200" value="100" oninput="setZoom(this.value)">
+            <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+            <span class="zoom-label" id="zoom-label">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT WINDOW -->
+      <div class="nx-window" id="about-window">
+        <div class="nx-titlebar fw-drag-handle" data-window="about-window">
+          <span class="win-icon">📄</span>
+          <span class="win-title">about.htm — Animorphix Studio 98</span>
+          <div class="nx-win-btn">_</div>
+          <div class="nx-win-btn">□</div>
+          <div class="nx-win-btn close fw-close" data-window="about-window">✕</div>
+        </div>
+        <div class="nx-win-body">
+          <div class="about-content">
+            <h2>Guy Phenix</h2>
+            <p>Independent television producer working in children's content for BBC Children's (CBBC &amp; CBeebies), with a focus on animation, European co-production, and financing.</p>
+            <p>Building web tools to support the production industry at:<br>
+              <a href="https://guyphenix.github.io/exp/" target="_blank">guyphenix.github.io/exp/</a>
+            </p>
+            <p class="about-footer">© 2003 Guy Phenix · Built with Animorphix Studio 98</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINKS WINDOW -->
+      <div class="nx-window" id="links-window">
+        <div class="nx-titlebar fw-drag-handle" data-window="links-window">
+          <span class="win-icon">🔗</span>
+          <span class="win-title">links.htm — Animorphix Studio 98</span>
+          <div class="nx-win-btn">_</div>
+          <div class="nx-win-btn">□</div>
+          <div class="nx-win-btn close fw-close" data-window="links-window">✕</div>
+        </div>
+        <div class="nx-win-body">
+          <div class="li-content">
+            <a class="li-link-btn" href="https://linkedin.com/in/guyphenix" target="_blank">
+              <div class="li-icon">in</div>
+              <div>
+                <div class="li-text">LinkedIn Profile</div>
+                <div class="li-sub">linkedin.com/in/guyphenix</div>
+              </div>
+              <span style="margin-left:auto;font-size:10px;opacity:0.5">→</span>
+            </a>
+            <div class="li-note">Click to open in your default browser. This action will take you outside Animorphix Studio 98.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /canvas-area -->
+
+  </div><!-- /workspace -->
+
+  <!-- STATUS BAR -->
+  <div id="statusbar">
+    <div class="sb-panel" id="sb-coords">X: 0  Y: 0</div>
+    <div class="sb-panel">guyphenix.amx</div>
+    <div class="sb-panel nx-brand">ANIMORPHIX</div>
+    <div class="sb-panel" style="margin-left:auto">Studio 98 Pro</div>
+  </div>
+
+</div><!-- /app-frame -->
+
+<script>
+// ── POSITION WINDOWS (responsive to viewport) ──
+function positionWindows() {
+  document.getElementById('photo-window').style.cssText += ';top:50px;left:70px;';
+  document.getElementById('about-window').style.cssText += ';top:50px;left:400px;width:290px;';
+  document.getElementById('links-window').style.cssText += ';top:310px;left:400px;width:290px;';
+}
+positionWindows();
+
+// ── DRAG WINDOWS ──
+function makeDraggable(el, handle) {
+  let ox = 0, oy = 0, mx = 0, my = 0;
+  handle.addEventListener('mousedown', e => {
+    // Don't drag if clicking a button
+    if (e.target.classList.contains('nx-win-btn')) return;
+    e.preventDefault();
+    mx = e.clientX; my = e.clientY;
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stop);
+  });
+  function drag(e) {
+    ox = mx - e.clientX; oy = my - e.clientY;
+    mx = e.clientX; my = e.clientY;
+    el.style.top  = (el.offsetTop  - oy) + 'px';
+    el.style.left = (el.offsetLeft - ox) + 'px';
+  }
+  function stop() {
+    document.removeEventListener('mousemove', drag);
+    document.removeEventListener('mouseup', stop);
+  }
+}
+
+makeDraggable(document.getElementById('photo-window'), document.getElementById('photo-drag-handle'));
+document.querySelectorAll('.fw-drag-handle').forEach(handle => {
+  makeDraggable(handle.closest('.nx-window'), handle);
+});
+
+// ── CLOSE BUTTONS ──
+document.querySelectorAll('.fw-close').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const winId = btn.dataset.window;
+    if (winId) document.getElementById(winId).style.display = 'none';
+  });
+});
+
+// ── BRING TO FRONT ──
+const allWins = ['photo-window', 'about-window', 'links-window'];
+let zTop = 101;
+allWins.forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('mousedown', function() {
+    this.style.zIndex = ++zTop;
+  });
+});
+
+// ── ZOOM ──
+let zoom = 100;
+function setZoom(v) {
+  zoom = parseInt(v);
+  document.getElementById('zoom-label').textContent = zoom + '%';
+  document.getElementById('zoom-slider').value = zoom;
+  const img = document.getElementById('profile-img');
+  img.style.transform = `scale(${zoom/100})`;
+  img.style.transformOrigin = 'top center';
+}
+function changeZoom(delta) {
+  setZoom(Math.min(200, Math.max(50, zoom + delta)));
+}
+
+// ── CURSOR COORDS ──
+document.addEventListener('mousemove', e => {
+  document.getElementById('sb-coords').textContent = `X: ${e.clientX}  Y: ${e.clientY}`;
+});
+
+// ── CLICK RIPPLES ──
+document.addEventListener('click', e => {
+  const r = document.createElement('div');
+  r.className = 'click-ripple';
+  r.style.left = e.clientX + 'px';
+  r.style.top  = e.clientY + 'px';
+  document.body.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+});
+</script>
+</body>
+</html>
