@@ -651,6 +651,41 @@ body::after {
 }
 .splash-card-footer span { color: var(--nx-purple); font-weight: bold; }
 
+/* ── MAP & GLOBE WINDOWS ── */
+#map-window  { top: 50px;  left: 720px; width: 300px; }
+#globe-window { top: 50px; left: 1040px; width: 300px; }
+
+#belfast-map {
+  width: 100%; height: 260px;
+  display: block;
+}
+/* Override Leaflet popup to match palette */
+.nx-popup .leaflet-popup-content-wrapper {
+  background: var(--nx-panel);
+  border: 2px solid var(--nx-purple);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+}
+.nx-popup .leaflet-popup-tip { background: var(--nx-purple); }
+
+#globe-canvas {
+  width: 100%; height: 260px;
+  display: block;
+  background: var(--nx-black);
+  cursor: grab;
+}
+#globe-canvas:active { cursor: grabbing; }
+
+.win-footer {
+  padding: 5px 8px;
+  background: var(--nx-panel);
+  font-size: 10px; color: #555;
+  border-top: 2px solid var(--nx-lime);
+  display: flex; align-items: center; gap: 5px;
+}
+
 /* Click ripples — lime this time */
 .click-ripple {
   position: fixed;
@@ -837,13 +872,9 @@ body::after {
         <div class="nx-win-body">
           <div class="about-content">
             <h2>Guy Phenix</h2>
-            <p>I'm a commissioning executive for Animation 0-6, based in Belfast.
-          
-            You can find out about  <a href="https://www.bbc.co.uk/commissioning/childrens/how-we-work/#workingwithbbcchildrens" target="_blank">working with us at CBeebies</a>.
-
-            or <a href="https://www.bbc.co.uk/commissioning/childrens/0-6/" target="_blank">Development priorities</a>.
-
-            Connect on <a href="https://www.linkedin.com/in/guyphenix/" target="_blank">Linkedin</a>.
+            <p>Independent television producer working in children's content for BBC Children's (CBBC &amp; CBeebies), with a focus on animation, European co-production, and financing.</p>
+            <p>Building web tools to support the production industry at:<br>
+              <a href="https://guyphenix.github.io/exp/" target="_blank">guyphenix.github.io/exp/</a>
             </p>
             <p class="about-footer">© 2003 Guy Phenix · Built with Animorphix Studio 98</p>
           </div>
@@ -872,6 +903,32 @@ body::after {
             <div class="li-note">Click to open in your default browser. This action will take you outside Animorphix Studio 98.</div>
           </div>
         </div>
+      </div>
+
+      <!-- MAP WINDOW: Where I Am Based -->
+      <div class="nx-window" id="map-window">
+        <div class="nx-titlebar fw-drag-handle" data-window="map-window">
+          <span class="win-icon">📍</span>
+          <span class="win-title">Where I am based</span>
+          <div class="nx-win-btn">_</div>
+          <div class="nx-win-btn">□</div>
+          <div class="nx-win-btn close fw-close" data-window="map-window">✕</div>
+        </div>
+        <div id="belfast-map"></div>
+        <div class="win-footer">📍 Belfast, Northern Ireland, GB</div>
+      </div>
+
+      <!-- GLOBE WINDOW: Who I Work With -->
+      <div class="nx-window" id="globe-window">
+        <div class="nx-titlebar fw-drag-handle" data-window="globe-window">
+          <span class="win-icon">🌍</span>
+          <span class="win-title">Who I work with</span>
+          <div class="nx-win-btn">_</div>
+          <div class="nx-win-btn">□</div>
+          <div class="nx-win-btn close fw-close" data-window="globe-window">✕</div>
+        </div>
+        <canvas id="globe-canvas"></canvas>
+        <div class="win-footer">🟣 Global reach &nbsp;|&nbsp; 🟢 Home base — Belfast</div>
       </div>
 
     </div><!-- /canvas-area -->
@@ -935,7 +992,7 @@ document.querySelectorAll('.fw-close').forEach(btn => {
 });
 
 // ── BRING TO FRONT ──
-const allWins = ['photo-window', 'about-window', 'links-window'];
+const allWins = ['photo-window', 'about-window', 'links-window', 'map-window', 'globe-window'];
 let zTop = 101;
 allWins.forEach(id => {
   const el = document.getElementById(id);
@@ -973,6 +1030,247 @@ document.addEventListener('click', e => {
   document.body.appendChild(r);
   setTimeout(() => r.remove(), 600);
 });
+
+// ── LEAFLET MAP: Belfast ──
+(function() {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+  document.head.appendChild(link);
+
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+  script.onload = function() {
+    const map = L.map('belfast-map', {
+      center: [54.5973, -5.9301],
+      zoom: 5,
+      zoomControl: true,
+      scrollWheelZoom: false,
+      attributionControl: false
+    });
+
+    // Dark CartoDB tiles — matches our palette perfectly
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Glowing lime pin
+    const belfastIcon = L.divIcon({
+      html: `<div style="
+        width:14px;height:14px;
+        background:#aaff00;
+        border:3px solid #6600cc;
+        border-radius:50%;
+        box-shadow:0 0 10px rgba(170,255,0,0.9),0 0 0 5px rgba(170,255,0,0.2);
+      "></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      className: ''
+    });
+
+    L.marker([54.5973, -5.9301], { icon: belfastIcon })
+      .addTo(map)
+      .bindPopup('<strong style="color:#6600cc;font-family:Tahoma,sans-serif">Belfast</strong><br><span style="font-family:Tahoma,sans-serif;font-size:10px">Northern Ireland</span>', {
+        className: 'nx-popup'
+      })
+      .openPopup();
+
+    // Fix tiles after drag/resize
+    document.getElementById('map-window').addEventListener('mouseup', () => {
+      setTimeout(() => map.invalidateSize(), 100);
+    });
+  };
+  document.head.appendChild(script);
+})();
+
+// ── CANVAS GLOBE: Who I Work With ──
+(function() {
+  const canvas = document.getElementById('globe-canvas');
+
+  function sizeCanvas() {
+    const r = canvas.getBoundingClientRect();
+    canvas.width  = r.width  || 300;
+    canvas.height = r.height || 260;
+  }
+  sizeCanvas();
+  const ctx = canvas.getContext('2d');
+  const W = () => canvas.width;
+  const H = () => canvas.height;
+
+  // Evenly distributed grid of pins across the globe
+  const partners = [];
+  for (let lat = -75; lat <= 75; lat += 22) {
+    const count = Math.max(4, Math.round(16 * Math.cos(lat * Math.PI / 180)));
+    for (let i = 0; i < count; i++) {
+      const lon = -180 + (360 / count) * i;
+      partners.push([lat, lon, '', false]);
+    }
+  }
+  // Belfast home pin on top
+  partners.push([54.60, -5.93, 'Belfast', true]);
+
+  let rotY = 0.3, rotX = 0.35;
+  let dragging = false, lastX = 0, lastY = 0;
+  let autoSpin = true;
+
+  function toCart(lat, lon) {
+    const phi   = (90 - lat)  * Math.PI / 180;
+    const theta = (lon + 180) * Math.PI / 180;
+    return {
+      x: -Math.sin(phi) * Math.cos(theta),
+      y:  Math.cos(phi),
+      z:  Math.sin(phi) * Math.sin(theta)
+    };
+  }
+
+  function rotatePoint(p) {
+    const x1 =  p.x * Math.cos(rotY) + p.z * Math.sin(rotY);
+    const z1 = -p.x * Math.sin(rotY) + p.z * Math.cos(rotY);
+    const y2 =  p.y * Math.cos(rotX) - z1  * Math.sin(rotX);
+    const z2 =  p.y * Math.sin(rotX) + z1  * Math.cos(rotX);
+    return { x: x1, y: y2, z: z2 };
+  }
+
+  function project(p, R, cx, cy) {
+    return { x: cx + p.x * R, y: cy - p.y * R };
+  }
+
+  function drawGlobe() {
+    const w = W(), h = H();
+    const cx = w / 2, cy = h / 2;
+    const R  = Math.min(w, h) * 0.40;
+    ctx.clearRect(0, 0, w, h);
+
+    // Sphere fill
+    const grd = ctx.createRadialGradient(cx - R*0.3, cy - R*0.3, R*0.05, cx, cy, R);
+    grd.addColorStop(0, '#1a0033');
+    grd.addColorStop(0.6, '#0d0d1a');
+    grd.addColorStop(1, '#050510');
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // Atmosphere glow
+    const atm = ctx.createRadialGradient(cx, cy, R * 0.88, cx, cy, R * 1.18);
+    atm.addColorStop(0,   'rgba(102,0,204,0)');
+    atm.addColorStop(0.5, 'rgba(102,0,204,0.15)');
+    atm.addColorStop(1,   'rgba(102,0,204,0)');
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * 1.18, 0, Math.PI * 2);
+    ctx.fillStyle = atm;
+    ctx.fill();
+
+    // Latitude lines
+    for (let lat = -75; lat <= 75; lat += 15) {
+      ctx.beginPath();
+      let first = true;
+      for (let lon = -180; lon <= 180; lon += 3) {
+        const p3 = rotatePoint(toCart(lat, lon));
+        if (p3.z < 0) { first = true; continue; }
+        const pt = project(p3, R, cx, cy);
+        first ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+        first = false;
+      }
+      ctx.strokeStyle = 'rgba(102,0,204,0.3)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+
+    // Longitude lines
+    for (let lon = -180; lon < 180; lon += 15) {
+      ctx.beginPath();
+      let first = true;
+      for (let lat = -90; lat <= 90; lat += 3) {
+        const p3 = rotatePoint(toCart(lat, lon));
+        if (p3.z < 0) { first = true; continue; }
+        const pt = project(p3, R, cx, cy);
+        first ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+        first = false;
+      }
+      ctx.strokeStyle = 'rgba(102,0,204,0.2)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+
+    // Clip to sphere for dots
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.clip();
+
+    partners.forEach(([lat, lon, label, isHome]) => {
+      const p3 = rotatePoint(toCart(lat, lon));
+      if (p3.z < 0) return;
+
+      const pt     = project(p3, R, cx, cy);
+      const dotR   = isHome ? 5 : 3;
+      const colour = isHome ? '#aaff00' : '#9933ff';
+      const glow   = isHome ? 'rgba(170,255,0,0.55)' : 'rgba(153,51,255,0.45)';
+
+      // Halo
+      const halo = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, dotR * 3.5);
+      halo.addColorStop(0, glow);
+      halo.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, dotR * 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = halo;
+      ctx.fill();
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = colour;
+      ctx.fill();
+      ctx.strokeStyle = isHome ? '#330066' : '#ccff33';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Label when facing front
+      if (p3.z > 0.12) {
+        ctx.font = isHome ? 'bold 8px Tahoma,sans-serif' : '8px Tahoma,sans-serif';
+        ctx.fillStyle = isHome ? '#aaff00' : 'rgba(220,220,255,0.8)';
+        ctx.textAlign = 'left';
+        label.split('\n').forEach((line, i) => {
+          ctx.fillText(line, pt.x + dotR + 3, pt.y + 3 + i * 9);
+        });
+      }
+    });
+
+    ctx.restore();
+
+    // Globe rim
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(102,0,204,0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function tick() {
+    if (autoSpin) rotY += 0.004;
+    drawGlobe();
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // Drag to spin
+  canvas.addEventListener('mousedown', e => {
+    dragging = true; autoSpin = false;
+    lastX = e.clientX; lastY = e.clientY;
+    e.stopPropagation();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    rotY += (e.clientX - lastX) * 0.01;
+    rotX += (e.clientY - lastY) * 0.008;
+    rotX = Math.max(-1.2, Math.min(1.2, rotX));
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  window.addEventListener('resize', sizeCanvas);
+})();
 </script>
 </body>
 </html>
