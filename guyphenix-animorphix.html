@@ -659,16 +659,6 @@ body::after {
   width: 100%; height: 260px;
   display: block;
 }
-/* Override Leaflet popup to match palette */
-.nx-popup .leaflet-popup-content-wrapper {
-  background: var(--nx-panel);
-  border: 2px solid var(--nx-purple);
-  border-radius: 0;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
-  font-family: 'Tahoma', sans-serif;
-  font-size: 11px;
-}
-.nx-popup .leaflet-popup-tip { background: var(--nx-purple); }
 
 #globe-canvas {
   width: 100%; height: 260px;
@@ -915,7 +905,7 @@ body::after {
           <div class="nx-win-btn close fw-close" data-window="map-window">✕</div>
         </div>
         <div id="belfast-map"></div>
-        <div class="win-footer">📍 Belfast, Northern Ireland, GB</div>
+        <div class="win-footer">📍 Belfast, NI</div>
       </div>
 
       <!-- GLOBE WINDOW: Who I Work With -->
@@ -1031,56 +1021,130 @@ document.addEventListener('click', e => {
   setTimeout(() => r.remove(), 600);
 });
 
-// ── LEAFLET MAP: Belfast ──
+// ── INLINE SVG MAP: British Isles with Belfast pin ──
 (function() {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
-  document.head.appendChild(link);
+  const container = document.getElementById('belfast-map');
+  // Approximate SVG outlines of Great Britain, Ireland and NI
+  // Coordinates mapped to a ~300×260 viewBox centred on the British Isles
+  container.innerHTML = `
+  <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg"
+       style="width:100%;height:100%;display:block;background:#0d0d1a">
 
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-  script.onload = function() {
-    const map = L.map('belfast-map', {
-      center: [54.5973, -5.9301],
-      zoom: 5,
-      zoomControl: true,
-      scrollWheelZoom: false,
-      attributionControl: false
-    });
+    <!-- Grid lines -->
+    <defs>
+      <pattern id="mgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(102,0,204,0.2)" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+    <rect width="300" height="260" fill="url(#mgrid)"/>
 
-    // Dark CartoDB tiles — matches our palette perfectly
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19
-    }).addTo(map);
+    <!-- Ocean tint -->
+    <rect width="300" height="260" fill="rgba(0,0,40,0.6)"/>
 
-    // Glowing lime pin
-    const belfastIcon = L.divIcon({
-      html: `<div style="
-        width:14px;height:14px;
-        background:#aaff00;
-        border:3px solid #6600cc;
-        border-radius:50%;
-        box-shadow:0 0 10px rgba(170,255,0,0.9),0 0 0 5px rgba(170,255,0,0.2);
-      "></div>`,
-      iconSize: [14, 14],
-      iconAnchor: [7, 7],
-      className: ''
-    });
+    <!-- GREAT BRITAIN — simplified outline -->
+    <path d="
+      M 148,8
+      C 155,8 163,12 168,18
+      C 174,25 177,32 175,40
+      C 173,48 168,52 172,58
+      C 176,64 182,65 184,72
+      C 186,79 183,86 179,91
+      C 175,96 170,98 168,104
+      C 166,110 168,117 165,122
+      C 162,127 157,129 155,135
+      C 153,141 155,148 152,154
+      C 149,160 143,163 140,169
+      C 137,175 137,182 133,187
+      C 129,192 123,194 120,200
+      C 117,206 118,213 114,218
+      C 110,223 104,225 100,230
+      C 96,234 94,239 89,241
+      C 84,243 78,241 74,238
+      C 70,235 68,230 65,226
+      C 62,222 58,219 57,214
+      C 56,209 59,204 59,199
+      C 59,194 56,189 57,184
+      C 58,179 62,175 63,170
+      C 64,165 62,160 64,155
+      C 66,150 71,147 73,142
+      C 75,137 74,131 77,126
+      C 80,121 85,118 88,113
+      C 91,108 92,102 96,98
+      C 100,94 105,92 109,88
+      C 113,84 115,79 120,76
+      C 125,73 131,73 136,70
+      C 141,67 145,62 148,57
+      C 151,52 151,46 153,41
+      C 155,36 158,31 158,26
+      C 158,21 154,14 148,8 Z
+    " fill="#1a1a3a" stroke="#6600cc" stroke-width="1.2"/>
 
-    L.marker([54.5973, -5.9301], { icon: belfastIcon })
-      .addTo(map)
-      .bindPopup('<strong style="color:#6600cc;font-family:Tahoma,sans-serif">Belfast</strong><br><span style="font-family:Tahoma,sans-serif;font-size:10px">Northern Ireland</span>', {
-        className: 'nx-popup'
-      })
-      .openPopup();
+    <!-- SCOTLAND bump at top -->
+    <path d="
+      M 148,8 C 144,6 139,7 136,10 C 133,13 133,18 136,21
+      C 139,24 144,24 147,21 C 150,18 151,13 148,8 Z
+    " fill="#1a1a3a" stroke="#6600cc" stroke-width="1"/>
 
-    // Fix tiles after drag/resize
-    document.getElementById('map-window').addEventListener('mouseup', () => {
-      setTimeout(() => map.invalidateSize(), 100);
-    });
-  };
-  document.head.appendChild(script);
+    <!-- IRELAND (whole island) -->
+    <path d="
+      M 62,90
+      C 68,86 75,84 80,88
+      C 85,92 86,99 84,106
+      C 82,113 77,118 75,125
+      C 73,132 74,140 71,147
+      C 68,154 62,158 60,165
+      C 58,172 61,180 58,186
+      C 55,192 49,195 47,201
+      C 45,207 47,214 44,219
+      C 41,224 35,226 32,222
+      C 29,218 30,212 29,207
+      C 28,202 25,197 26,192
+      C 27,187 31,183 32,178
+      C 33,173 31,168 33,163
+      C 35,158 40,155 42,150
+      C 44,145 43,139 46,134
+      C 49,129 54,126 57,121
+      C 60,116 61,110 63,105
+      C 65,100 64,94 62,90 Z
+    " fill="#1a1a3a" stroke="#6600cc" stroke-width="1.2"/>
+
+    <!-- NORTHERN IRELAND highlight -->
+    <path d="
+      M 62,90 C 66,87 71,86 76,88 C 81,90 83,95 82,100
+      C 81,105 77,108 73,109 C 69,110 65,108 63,104
+      C 61,100 60,94 62,90 Z
+    " fill="#2a0044" stroke="#9933ff" stroke-width="1" opacity="0.9"/>
+
+    <!-- Shetland (tiny blob top right) -->
+    <ellipse cx="185" cy="14" rx="5" ry="8" fill="#1a1a3a" stroke="#6600cc" stroke-width="0.8"/>
+
+    <!-- Orkney (tiny) -->
+    <ellipse cx="172" cy="22" rx="4" ry="5" fill="#1a1a3a" stroke="#6600cc" stroke-width="0.8"/>
+
+    <!-- Isle of Man -->
+    <ellipse cx="88" cy="128" rx="4" ry="6" fill="#1a1a3a" stroke="#6600cc" stroke-width="0.8"/>
+
+    <!-- BELFAST PIN — lat 54.6, lon -5.93 mapped to approx x=70, y=99 -->
+    <!-- Pulse ring -->
+    <circle cx="70" cy="99" r="10" fill="none" stroke="#aaff00" stroke-width="1" opacity="0.4">
+      <animate attributeName="r" values="6;14;6" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Pin dot -->
+    <circle cx="70" cy="99" r="5" fill="#aaff00" stroke="#330066" stroke-width="1.5"/>
+    <circle cx="70" cy="99" r="2" fill="#330066"/>
+
+    <!-- Label -->
+    <text x="77" y="96" font-family="Tahoma,sans-serif" font-size="8"
+          font-weight="bold" fill="#aaff00">Belfast, NI</text>
+
+    <!-- Compass rose (bottom right) -->
+    <g transform="translate(268,230)">
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#6600cc" stroke-width="1"/>
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#6600cc" stroke-width="1"/>
+      <text x="-3" y="-14" font-family="Tahoma" font-size="7" fill="#9933ff">N</text>
+    </g>
+  </svg>`;
 })();
 
 // ── CANVAS GLOBE: Who I Work With ──
@@ -1097,16 +1161,21 @@ document.addEventListener('click', e => {
   const W = () => canvas.width;
   const H = () => canvas.height;
 
-  // Evenly distributed grid of pins across the globe
+  // 60 randomly scattered pins across the whole globe
   const partners = [];
-  for (let lat = -75; lat <= 75; lat += 22) {
-    const count = Math.max(4, Math.round(16 * Math.cos(lat * Math.PI / 180)));
-    for (let i = 0; i < count; i++) {
-      const lon = -180 + (360 / count) * i;
-      partners.push([lat, lon, '', false]);
-    }
+  const rng = (seed) => { // simple seeded random so layout is stable
+    let s = seed;
+    return () => { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; };
+  };
+  const rand = rng(42);
+  for (let i = 0; i < 60; i++) {
+    // Use spherical uniform distribution so poles aren't sparse
+    const u   = rand() * 2 - 1;          // cos(lat) uniform -1..1
+    const lat = Math.asin(u) * 180 / Math.PI;
+    const lon = rand() * 360 - 180;
+    partners.push([lat, lon, '', false]);
   }
-  // Belfast home pin on top
+  // Belfast home pin
   partners.push([54.60, -5.93, 'Belfast', true]);
 
   let rotY = 0.3, rotX = 0.35;
@@ -1226,14 +1295,12 @@ document.addEventListener('click', e => {
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Label when facing front
-      if (p3.z > 0.12) {
-        ctx.font = isHome ? 'bold 8px Tahoma,sans-serif' : '8px Tahoma,sans-serif';
-        ctx.fillStyle = isHome ? '#aaff00' : 'rgba(220,220,255,0.8)';
+      // Label only for home
+      if (isHome && p3.z > 0.12) {
+        ctx.font = 'bold 8px Tahoma,sans-serif';
+        ctx.fillStyle = '#aaff00';
         ctx.textAlign = 'left';
-        label.split('\n').forEach((line, i) => {
-          ctx.fillText(line, pt.x + dotR + 3, pt.y + 3 + i * 9);
-        });
+        ctx.fillText('Belfast', pt.x + dotR + 3, pt.y + 3);
       }
     });
 
